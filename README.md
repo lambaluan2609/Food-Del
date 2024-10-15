@@ -30,7 +30,7 @@ Tomato is a web application that allows users to quickly and conveniently order 
 2. Install dependencies:
 
     ```bash
-    cd tomato
+    cd Food-Del
     npm install
     ```
 
@@ -42,7 +42,7 @@ Tomato is a web application that allows users to quickly and conveniently order 
 
 ## Usage
 
-Once the installation is complete, open your browser and navigate to `http://localhost:3000` to start using the app.
+Once the installation is complete, open your browser and navigate to `http://localhost:5173` to start using the app.
 
 ## Technologies Used
 

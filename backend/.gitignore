@@ -12,7 +12,7 @@ yarn-error.log*
 .env
 
 # Directory for uploaded files
-uploads/
+
 
 # Database
 *.sqlite

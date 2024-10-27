@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useContext, useEffect } from 'react'
 import './Verify.css'
 import { useNavigate, useSearchParams } from 'react-router-dom'

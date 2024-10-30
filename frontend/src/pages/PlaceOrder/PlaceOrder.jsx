@@ -40,12 +40,14 @@ const PlaceOrder = () => {
         let orderData = {
           address: data,
           items: orderItems,
+          shipAmount: 2,
           amount: getTotalCartAmount()+2,
         }
         let response = await axios.post(url+"/api/order/place", orderData,{headers:{token}})
         if(response.data.success){
-          const {session_url} = response.data;
-          window.location.replace(session_url)
+          const {order_url, order_id} = response.data.data;
+          navigate(`/qrcode?order_url=${order_url}&order_id=${order_id}`)
+          // window.location.replace(session_url)
         }
         else{
           alert("Error")

@@ -37,7 +37,7 @@ export default [
     'react/jsx-uses-react': 'off', 
     'no-unused-vars': ['error', { 'varsIgnorePattern': '^React$' }], 
     "react/prop-types": "off"
-
+    
   },
 },
 ]

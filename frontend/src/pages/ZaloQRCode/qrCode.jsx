@@ -5,6 +5,7 @@ import {QRCodeSVG} from 'qrcode.react';
 import axios from "axios";
 import {StoreContext} from "../../context/StoreContext.jsx";
 import "./qrCode.css"
+import assets from '../../assets/assets.js';
 
 const QRCodePage = () => {
 
@@ -35,11 +36,16 @@ const QRCodePage = () => {
     }, [])
 
     return (
-        <div style={{textAlign: "center"}}>
-            <QRCodeSVG value={orderUrl} size={256}/>
-            <div className='verify'>
-                <div className="spinner"></div>
+        <div className='qr-code'>
+            <div className='payment-process'>
+                <h1>Scan this QR Code on your phone to payment</h1>
             </div>
+            <div className="imgLogo">
+                <img src={assets.zaloPayLogo} alt="" />
+                <img src={assets.zaloLogo} alt="" />
+            </div>
+            <QRCodeSVG className='qrcodeSVG' value={orderUrl} size={256}/>
+            
         </div>
     )
 }

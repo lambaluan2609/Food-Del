@@ -9,8 +9,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 const App = () => {
 
-  const url = import.meta.env.VITE_BACKEND_URL
-
+    const url = import.meta.env.VITE_API_URL;
 
   return (
     <div>

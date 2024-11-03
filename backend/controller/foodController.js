@@ -80,15 +80,30 @@ const listFood = async (req, res) => {
 
 const removeFood = async (req, res) => {
     try {
-        const food = await foodModel.findByIdAndDelete(req.body.id);
-        fs.unlinkSync(`uploads/${food.image}`,()=>{});
-        
+        // Find the food item by ID
+        const food = await foodModel.findById(req.body.id);
+
+        if (!food) {
+            return res.status(404).json({ success: false, message: "Food item not found" });
+        }
+
+        // Extract the file name from the Firebase URL
+        const fileName = food.image.split("/").pop();
+        const bucket = getFirebaseStorage("food-del");
+        const file = bucket.file(fileName);
+
+        // Delete the file from Firebase Storage
+        await file.delete();
+
+        // Delete the food item from the database
         await foodModel.findByIdAndDelete(req.body.id);
-        res.json({success: true, message: "Food Removed"})
+
+        res.json({ success: true, message: "Food Removed" });
     } catch (error) {
         console.log(error);
-        res.json({success: false, message: "Error"})
+        res.status(500).json({ success: false, message: "Error" });
     }
-}
+};
+
     
 export {addFood, listFood, removeFood}

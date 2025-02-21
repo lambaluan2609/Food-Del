@@ -15,7 +15,8 @@ const Add = ({ url }) => {
         cookingTime: "",
         servings: "",
         difficulty: "Easy",
-        author: ""
+        author: "",
+        youtubeUrl: ""
     });
 
     const onChangeHandler = (event) => {
@@ -43,7 +44,8 @@ const Add = ({ url }) => {
                     cookingTime: "",
                     servings: "",
                     difficulty: "Easy",
-                    author: ""
+                    author: "",
+                    youtubeUrl: ""
                 });
                 setImage(false);
                 toast.success(response.data.message);
@@ -126,6 +128,10 @@ const Add = ({ url }) => {
                     <div className="add-meta flex-col">
                         <p>Author</p>
                         <input onChange={onChangeHandler} value={data.author} type="text" name="author" placeholder='Enter author name' required />
+                    </div>
+                    <div className="add-meta flex-col">
+                        <p>Youtube URL</p>
+                        <input onChange={onChangeHandler} value={data.youtubeUrl} type="text" name="youtubeUrl" placeholder='Enter youtube url' required />
                     </div>
                 </div>
 

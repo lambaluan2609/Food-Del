@@ -33,7 +33,8 @@ const addFood = async (req, res) => {
                 cookingTime: req.body.cookingTime,
                 servings: req.body.servings,
                 difficulty: req.body.difficulty,
-                author: req.body.author
+                author: req.body.author,
+                youtubeUrl: req.body.youtubeUrl,
             });
 
             await food.save();
@@ -66,7 +67,6 @@ const listFood = async (req, res) => {
         res.status(500).json({ success: false, message: "Error fetching food recipes" });
     }
 };
-
 
 
 const getFoodDetail = async (req, res) => {
@@ -124,5 +124,56 @@ const removeFood = async (req, res) => {
     }
 };
 
+const updateFood = async (req, res) => {
+    try {
+        const { id } = req.params;  // Lấy ID từ tham số URL
+        const updatedData = req.body;  // Lấy dữ liệu mới từ req.body
 
-export { addFood, listFood, removeFood, getFoodDetail };
+        // Kiểm tra xem có file hình ảnh không (nếu cần update hình ảnh)
+        if (req.file) {
+            const bucket = getFirebaseStorage();
+            const fileName = `${new Date().getTime()}_${req.file.originalname}`;
+            const blob = bucket.file(fileName);
+            const blobStream = blob.createWriteStream({
+                metadata: { contentType: req.file.mimetype },
+            });
+
+            // Khi tải hình ảnh lên thành công, cập nhật URL hình ảnh
+            await new Promise((resolve, reject) => {
+                blobStream.on("finish", resolve);
+                blobStream.on("error", reject);
+                blobStream.end(req.file.buffer);
+            });
+
+            await blob.makePublic();
+            const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+            updatedData.image = publicUrl;  // Cập nhật hình ảnh
+            updatedData.fileName = fileName;  // Cập nhật tên file
+        }
+
+        // **Tách các bước nấu ăn thành từng phần tử nếu có** (nếu không thay đổi cấu trúc, có thể bỏ qua)
+        if (updatedData.steps) {
+            updatedData.steps = updatedData.steps.split("\r\n").filter(step => step.trim() !== "");
+        }
+
+        // **Cập nhật youtubeUrl** nếu có trong req.body
+        if (updatedData.youtubeUrl) {
+            updatedData.youtubeUrl = updatedData.youtubeUrl.trim();
+        }
+
+        // Cập nhật công thức nấu ăn theo ID
+        const food = await foodModel.findByIdAndUpdate(id, updatedData, { new: true });
+
+        if (!food) {
+            return res.status(404).json({ success: false, message: "Food recipe not found" });
+        }
+
+        res.json({ success: true, message: "Food Recipe Updated", data: food });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: "Error updating food recipe" });
+    }
+};
+
+
+export { addFood, listFood, removeFood, getFoodDetail, updateFood };

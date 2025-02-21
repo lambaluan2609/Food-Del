@@ -52,12 +52,22 @@ const addFood = async (req, res) => {
 const listFood = async (req, res) => {
     try {
         const foods = await foodModel.find();
-        res.json({ success: true, data: foods });
+
+        // Format lại ingredients & steps trước khi trả về
+        const formattedFoods = foods.map(food => ({
+            ...food._doc,
+            ingredients: food.ingredients.flatMap(ingredient => ingredient.split(/\r\n|\n/).map(i => i.trim()).filter(i => i !== "")),
+            steps: food.steps.flatMap(step => step.split(/\r\n|\n/).map(s => s.trim()).filter(s => s !== "")),
+        }));
+
+        res.json({ success: true, data: formattedFoods });
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: "Error fetching food recipes" });
     }
 };
+
+
 
 const getFoodDetail = async (req, res) => {
     try {
@@ -68,7 +78,13 @@ const getFoodDetail = async (req, res) => {
             return res.status(404).json({ success: false, message: "Food recipe not found" });
         }
 
-        res.json({ success: true, data: food });
+        // Format lại ingredients để hiển thị rõ ràng
+        const formattedFood = {
+            ...food._doc,
+            ingredients: food.ingredients.flatMap(ingredient => ingredient.split(/\r\n|\n/).map(i => i.trim()).filter(i => i !== "")),
+        };
+
+        res.json({ success: true, data: formattedFood });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: "Error fetching food recipe" });

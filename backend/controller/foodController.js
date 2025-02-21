@@ -8,30 +8,28 @@ const addFood = async (req, res) => {
             return res.status(400).send("No file uploaded.");
         }
 
-        const bucket = getFirebaseStorage("food-del");
+        const bucket = getFirebaseStorage();
         const fileName = `${new Date().getTime()}_${req.file.originalname}`;
         const blob = bucket.file(fileName);
         const blobStream = blob.createWriteStream({
             metadata: { contentType: req.file.mimetype },
         });
 
-        blobStream.on("error", (err) => {
-            console.error(err);
-            res.status(500).send("Unable to upload at the moment.");
-        });
-
         blobStream.on("finish", async () => {
             await blob.makePublic();
             const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+
+            // **Tách các bước nấu ăn thành từng phần tử**
+            const formattedSteps = req.body.steps.split("\r\n").filter(step => step.trim() !== "");
 
             const food = new foodModel({
                 name: req.body.name,
                 description: req.body.description,
                 image: publicUrl,
-                fileName, // 🔥 Lưu luôn tên file để dễ xóa
+                fileName,
                 category: req.body.category,
                 ingredients: req.body.ingredients,
-                steps: req.body.steps,
+                steps: formattedSteps,  // 🔥 Lưu danh sách đã format
                 cookingTime: req.body.cookingTime,
                 servings: req.body.servings,
                 difficulty: req.body.difficulty,
@@ -49,6 +47,7 @@ const addFood = async (req, res) => {
     }
 };
 
+
 // List all food recipes
 const listFood = async (req, res) => {
     try {
@@ -57,6 +56,22 @@ const listFood = async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(500).json({ success: false, message: "Error fetching food recipes" });
+    }
+};
+
+const getFoodDetail = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const food = await foodModel.findById(id);
+
+        if (!food) {
+            return res.status(404).json({ success: false, message: "Food recipe not found" });
+        }
+
+        res.json({ success: true, data: food });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "Error fetching food recipe" });
     }
 };
 
@@ -94,4 +109,4 @@ const removeFood = async (req, res) => {
 };
 
 
-export { addFood, listFood, removeFood };
+export { addFood, listFood, removeFood, getFoodDetail };

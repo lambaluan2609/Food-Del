@@ -72,24 +72,40 @@ const listFood = async (req, res) => {
 const getFoodDetail = async (req, res) => {
     try {
         const { id } = req.params;
+
+        // Kiểm tra ID có hợp lệ hay không
+        if (!id || !id.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).json({ success: false, message: "Invalid food ID" });
+        }
+
         const food = await foodModel.findById(id);
 
         if (!food) {
             return res.status(404).json({ success: false, message: "Food recipe not found" });
         }
 
-        // Format lại ingredients để hiển thị rõ ràng
+        // Kiểm tra ingredients có phải là mảng không trước khi format
         const formattedFood = {
             ...food._doc,
-            ingredients: food.ingredients.flatMap(ingredient => ingredient.split(/\r\n|\n/).map(i => i.trim()).filter(i => i !== "")),
+            ingredients: Array.isArray(food.ingredients)
+                ? food.ingredients
+                    .flatMap(ingredient => 
+                        ingredient
+                            .split(/\r\n|\n/)
+                            .map(i => i.trim())
+                            .filter(i => i !== "")
+                    )
+                : [],
         };
 
-        res.json({ success: true, data: formattedFood });
+        return res.json({ success: true, data: formattedFood });
+
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: "Error fetching food recipe" });
+        console.error("Error fetching food recipe:", error.message);
+        return res.status(500).json({ success: false, message: "Error fetching food recipe" });
     }
 };
+
 
 // Remove food recipe
 const removeFood = async (req, res) => {

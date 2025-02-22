@@ -107,6 +107,14 @@
     border-radius: 8px;
 }
 
+.description-grid {
+    display: grid;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid #FF6B35;
+    border-radius: 8px;
+}
+
 .ingredient-item {
     display: flex;
     align-items: center;
@@ -220,7 +228,7 @@
     .ingredients-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .step-item {
         flex-direction: column;
         align-items: start;

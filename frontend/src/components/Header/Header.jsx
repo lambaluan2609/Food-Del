@@ -3,11 +3,11 @@ import './Header.css'
 const Header = () => {
   return (
     <div className='header'>
-        <div className="header-contents">
-            <h2>Order your favorites food here</h2>
-            <p>Choose from a diverse menu featuring a delectable array of dishes crafted with the finest ingredients and culinary expertise. Our mission is to satisfy your cravings and elevate your dining experience, one delicious meal at a time.</p>
-            <button>View Menu</button>
-        </div>
+      <div className="header-contents">
+        <h2>Tìm kiếm công thức nấu ăn ngon cùng Cook&Carry</h2>
+        <p>Khám phá nhiều công thức nấu ăn hấp dẫn tại CookNCarry. Từ những bữa ăn nhanh gọn, dễ làm đến các mon ăn hào hạng, chúng tôi có lựa chọn ph hợp cho mọi khẩu vị.</p>
+        <button>Tìm kiếm</button>
+      </div>
     </div>
   )
 }

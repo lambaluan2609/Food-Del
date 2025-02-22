@@ -1,109 +1,179 @@
 import foodModel from "../model/foodModel.js";
-import fs from "fs";
-import {getFirebaseStorage} from "../config/firebase.js"
+import { getFirebaseStorage } from "../config/firebase.js";
 
-//add food item
-
+// Add food recipe
 const addFood = async (req, res) => {
-
     try {
         if (!req.file) {
             return res.status(400).send("No file uploaded.");
         }
 
-        const bucket = getFirebaseStorage("food-del");
-        const blob = bucket.file(`${new Date().getTime()}_${req.file.originalname}`);
+        const bucket = getFirebaseStorage();
+        const fileName = `${new Date().getTime()}_${req.file.originalname}`;
+        const blob = bucket.file(fileName);
         const blobStream = blob.createWriteStream({
-            metadata: {
-                contentType: req.file.mimetype,
-            },
-        });
-
-        blobStream.on("error", (err) => {
-            console.error(err);
-            res.status(500).send("Unable to upload at the moment.");
+            metadata: { contentType: req.file.mimetype },
         });
 
         blobStream.on("finish", async () => {
-            // Make the file public
             await blob.makePublic();
-            // Get the public URL
             const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+
+            // **Tách các bước nấu ăn thành từng phần tử**
+            const formattedSteps = req.body.steps.split("\r\n").filter(step => step.trim() !== "");
+
             const food = new foodModel({
                 name: req.body.name,
                 description: req.body.description,
-                price: req.body.price,
+                image: publicUrl,
+                fileName,
                 category: req.body.category,
-                image: publicUrl
-            })
+                ingredients: req.body.ingredients,
+                steps: formattedSteps,  // 🔥 Lưu danh sách đã format
+                cookingTime: req.body.cookingTime,
+                servings: req.body.servings,
+                difficulty: req.body.difficulty,
+                author: req.body.author,
+                youtubeUrl: req.body.youtubeUrl,
+            });
 
             await food.save();
-            res.json({success: true, message: "Food Added"})
+            res.json({ success: true, message: "Food Recipe Added" });
         });
 
         blobStream.end(req.file.buffer);
-
     } catch (err) {
-        console.error(err)
-    }
-
-    // let image_filename = `${req.file.filename}`
-    //
-    // const food = new foodModel({
-    //     name: req.body.name,
-    //     description: req.body.description,
-    //     price: req.body.price,
-    //     category: req.body.category,
-    //     image: image_filename
-    // })
-    // try {
-    //     await food.save();
-    //     res.json({success: true, message: "Food Added"})
-    // } catch (error) {
-    //     console.log(error);
-    //     res.json({success: false, message: "Food Not Added"})
-    // }
-}
-
-// all food list
-const listFood = async (req, res) => {
-    try {
-        const foods = await foodModel.find();
-        res.json({success: true, data:foods})
-    } catch (error) {
-        console.log(error);
-        res.json({success: false, message: "Error"})
-    }
-}
-
-// remove food item
-
-const removeFood = async (req, res) => {
-    try {
-        // Find the food item by ID
-        const food = await foodModel.findById(req.body.id);
-
-        if (!food) {
-            return res.status(404).json({ success: false, message: "Food item not found" });
-        }
-
-        // Extract the file name from the Firebase URL
-        const fileName = food.image.split("/").pop();
-        const bucket = getFirebaseStorage("food-del");
-        const file = bucket.file(fileName);
-
-        // Delete the file from Firebase Storage
-        await file.delete();
-
-        // Delete the food item from the database
-        await foodModel.findByIdAndDelete(req.body.id);
-
-        res.json({ success: true, message: "Food Removed" });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ success: false, message: "Error" });
+        console.error(err);
+        res.status(500).json({ success: false, message: "Error adding food recipe" });
     }
 };
 
-    
-export {addFood, listFood, removeFood}
+
+// List all food recipes
+const listFood = async (req, res) => {
+    try {
+        const foods = await foodModel.find();
+
+        // Format lại ingredients & steps trước khi trả về
+        const formattedFoods = foods.map(food => ({
+            ...food._doc,
+            ingredients: food.ingredients.flatMap(ingredient => ingredient.split(/\r\n|\n/).map(i => i.trim()).filter(i => i !== "")),
+            steps: food.steps.flatMap(step => step.split(/\r\n|\n/).map(s => s.trim()).filter(s => s !== "")),
+        }));
+
+        res.json({ success: true, data: formattedFoods });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "Error fetching food recipes" });
+    }
+};
+
+
+const getFoodDetail = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const food = await foodModel.findById(id);
+
+        if (!food) {
+            return res.status(404).json({ success: false, message: "Food recipe not found" });
+        }
+
+        // Format lại ingredients để hiển thị rõ ràng
+        const formattedFood = {
+            ...food._doc,
+            ingredients: food.ingredients.flatMap(ingredient => ingredient.split(/\r\n|\n/).map(i => i.trim()).filter(i => i !== "")),
+        };
+
+        res.json({ success: true, data: formattedFood });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "Error fetching food recipe" });
+    }
+};
+
+// Remove food recipe
+const removeFood = async (req, res) => {
+    try {
+        const food = await foodModel.findById(req.body.id);
+
+        if (!food) {
+            return res.status(404).json({ success: false, message: "Food recipe not found" });
+        }
+
+        console.log("Food Image URL:", food.image);
+
+        if (!food.image) {
+            return res.status(400).json({ success: false, message: "Food image URL is missing" });
+        }
+
+        const fileName = food.image.split("/").pop();
+        if (!fileName) {
+            return res.status(400).json({ success: false, message: "Invalid image URL" });
+        }
+
+        const bucket = getFirebaseStorage("food-del");
+        const file = bucket.file(fileName);
+
+        await file.delete();
+        await foodModel.findByIdAndDelete(req.body.id);
+
+        res.json({ success: true, message: "Food Recipe Removed" });
+    } catch (error) {
+        console.error("Error removing food:", error);
+        res.status(500).json({ success: false, message: "Error removing food recipe", error: error.message });
+    }
+};
+
+const updateFood = async (req, res) => {
+    try {
+        const { id } = req.params;  // Lấy ID từ tham số URL
+        const updatedData = req.body;  // Lấy dữ liệu mới từ req.body
+
+        // Kiểm tra xem có file hình ảnh không (nếu cần update hình ảnh)
+        if (req.file) {
+            const bucket = getFirebaseStorage();
+            const fileName = `${new Date().getTime()}_${req.file.originalname}`;
+            const blob = bucket.file(fileName);
+            const blobStream = blob.createWriteStream({
+                metadata: { contentType: req.file.mimetype },
+            });
+
+            // Khi tải hình ảnh lên thành công, cập nhật URL hình ảnh
+            await new Promise((resolve, reject) => {
+                blobStream.on("finish", resolve);
+                blobStream.on("error", reject);
+                blobStream.end(req.file.buffer);
+            });
+
+            await blob.makePublic();
+            const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+            updatedData.image = publicUrl;  // Cập nhật hình ảnh
+            updatedData.fileName = fileName;  // Cập nhật tên file
+        }
+
+        // **Tách các bước nấu ăn thành từng phần tử nếu có** (nếu không thay đổi cấu trúc, có thể bỏ qua)
+        if (updatedData.steps) {
+            updatedData.steps = updatedData.steps.split("\r\n").filter(step => step.trim() !== "");
+        }
+
+        // **Cập nhật youtubeUrl** nếu có trong req.body
+        if (updatedData.youtubeUrl) {
+            updatedData.youtubeUrl = updatedData.youtubeUrl.trim();
+        }
+
+        // Cập nhật công thức nấu ăn theo ID
+        const food = await foodModel.findByIdAndUpdate(id, updatedData, { new: true });
+
+        if (!food) {
+            return res.status(404).json({ success: false, message: "Food recipe not found" });
+        }
+
+        res.json({ success: true, message: "Food Recipe Updated", data: food });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: "Error updating food recipe" });
+    }
+};
+
+
+export { addFood, listFood, removeFood, getFoodDetail, updateFood };

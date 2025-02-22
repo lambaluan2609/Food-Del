@@ -4,34 +4,36 @@ import { FaClock, FaStar, FaAppleAlt, FaUserAlt } from 'react-icons/fa';
 import './RecipeDetails.css';
 
 // Custom hook cho scroll animation
-const useScrollAnimation = () => {
-    const [isVisible, setIsVisible] = useState(false);
-    const elementRef = useRef(null);
+
+const useScrollAnimation = (deps = []) => {
+    const [isVisible, setIsVisible] = useState(false)
+    const elementRef = useRef(null)
 
     useEffect(() => {
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
-                    setIsVisible(true);
+                    setIsVisible(true)
+                    observer.unobserve(entry.target)
                 }
             },
-            { threshold: 0.1 }
-        );
+            { 
+                root: null,
+                rootMargin: '0px 0px -20px 0px', 
+                threshold: 0.01 
+            }
+        )
 
-        if (elementRef.current) {
-            observer.observe(elementRef.current);
-        }
+        const currentElement = elementRef.current
+        if (currentElement) observer.observe(currentElement)
 
         return () => {
-            if (elementRef.current) {
-                observer.unobserve(elementRef.current);
-            }
-        };
-    }, []);
+            if (currentElement) observer.unobserve(currentElement)
+        }
+    }, [deps])
 
-    return [isVisible, elementRef];
-};
-
+    return [isVisible, elementRef]
+}
 const RecipeDetails = () => {
     const { id } = useParams();
     const [recipe, setRecipe] = useState(null);
@@ -43,11 +45,11 @@ const RecipeDetails = () => {
     });
 
     // Scroll animations cho các section
-    const [isDescVisible, descRef] = useScrollAnimation();
-    const [isIngredientsVisible, ingredientsRef] = useScrollAnimation();
-    const [isStepsVisible, stepsRef] = useScrollAnimation();
-    const [isVideoVisible, videoRef] = useScrollAnimation();
-    const [isAuthorVisible, authorRef] = useScrollAnimation();
+    const [isDescVisible, descRef] = useScrollAnimation([id])
+    const [isIngredientsVisible, ingredientsRef] = useScrollAnimation([id])
+    const [isStepsVisible, stepsRef] = useScrollAnimation([id])
+    const [isVideoVisible, videoRef] = useScrollAnimation([id])
+    const [isAuthorVisible, authorRef] = useScrollAnimation([id])
 
     const url = import.meta.env.VITE_API_URL;
 
@@ -68,6 +70,18 @@ const RecipeDetails = () => {
         };
         fetchRecipe();
     }, [id]);
+
+    useEffect(() => {
+    // Reset scroll về đầu trang khi mount component
+    window.scrollTo(0, 0)
+    
+    // Force re-check vị trí các element sau 100ms
+    const timer = setTimeout(() => {
+        window.dispatchEvent(new Event('scroll'))
+    }, 100)
+    
+    return () => clearTimeout(timer)
+}, [id])
 
     // Animation cho số
     useEffect(() => {

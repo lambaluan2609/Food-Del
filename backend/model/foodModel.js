@@ -8,6 +8,7 @@ const foodSchema = new mongoose.Schema({
     ingredients: [{ type: String, required: true }], // Danh sách nguyên liệu
     steps: [{ type: String, required: true }], // Các bước nấu ăn
     cookingTime: { type: Number, required: true }, // Thời gian nấu (phút)
+    calories: { type: String, required: true }, // Lượng calo
     servings: { type: Number, required: true }, // Số khẩu phần ăn
     difficulty: { type: String, enum: ["Easy", "Medium", "Hard"], required: true }, // Mức độ khó
     author: { type: String, required: true }, // Tên tác giả hoặc nguồn công thức

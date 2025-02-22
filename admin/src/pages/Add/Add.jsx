@@ -13,6 +13,7 @@ const Add = ({ url }) => {
         ingredients: "",
         steps: "",
         cookingTime: "",
+        calories: "",
         servings: "",
         difficulty: "Easy",
         author: "",
@@ -42,6 +43,7 @@ const Add = ({ url }) => {
                     ingredients: "",
                     steps: "",
                     cookingTime: "",
+                    calories: "",
                     servings: "",
                     difficulty: "Easy",
                     author: "",
@@ -110,7 +112,10 @@ const Add = ({ url }) => {
                         <p>Cooking Time (minutes)</p>
                         <input onChange={onChangeHandler} value={data.cookingTime} type="number" name="cookingTime" placeholder='30' required />
                     </div>
-
+                    <div className="add-meta flex-col">
+                        <p>Calories (cal)</p>
+                        <input onChange={onChangeHandler} value={data.calories} type="number" name="calories" placeholder='100' required />
+                    </div>
                     <div className="add-meta flex-col">
                         <p>Servings</p>
                         <input onChange={onChangeHandler} value={data.servings} type="number" name="servings" placeholder='2' required />

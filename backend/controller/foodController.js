@@ -31,6 +31,7 @@ const addFood = async (req, res) => {
                 ingredients: req.body.ingredients,
                 steps: formattedSteps,  // 🔥 Lưu danh sách đã format
                 cookingTime: req.body.cookingTime,
+                calories: req.body.calories,
                 servings: req.body.servings,
                 difficulty: req.body.difficulty,
                 author: req.body.author,
@@ -57,16 +58,37 @@ const listFood = async (req, res) => {
         // Format lại ingredients & steps trước khi trả về
         const formattedFoods = foods.map(food => ({
             ...food._doc,
-            ingredients: food.ingredients.flatMap(ingredient => ingredient.split(/\r\n|\n/).map(i => i.trim()).filter(i => i !== "")),
-            steps: food.steps.flatMap(step => step.split(/\r\n|\n/).map(s => s.trim()).filter(s => s !== "")),
+
+            // Format ingredients như cũ
+            ingredients: Array.isArray(food.ingredients)
+                ? food.ingredients.flatMap(ingredient =>
+                    ingredient.split(/\r\n|\n/).map(i => i.trim()).filter(i => i !== "")
+                )
+                : [],
+
+            // Format steps: ghép số thứ tự và nội dung
+            steps: (() => {
+                const formattedSteps = [];
+                for (let i = 0; i < food.steps.length; i++) {
+                    const currentStep = food.steps[i].trim();
+                    const nextStep = food.steps[i + 1] ? food.steps[i + 1].trim() : "";
+
+                    if (/^\d+\.$/.test(currentStep) && nextStep) {
+                        formattedSteps.push(`${currentStep} ${nextStep}`);
+                        i++;  // Bỏ qua phần đã ghép
+                    }
+                }
+                return formattedSteps;
+            })()
         }));
 
         res.json({ success: true, data: formattedFoods });
     } catch (error) {
-        console.log(error);
+        console.error("Error fetching food recipes:", error.message);
         res.status(500).json({ success: false, message: "Error fetching food recipes" });
     }
 };
+
 
 
 const getFoodDetail = async (req, res) => {
@@ -84,18 +106,31 @@ const getFoodDetail = async (req, res) => {
             return res.status(404).json({ success: false, message: "Food recipe not found" });
         }
 
+        // **Format steps (Ghép số thứ tự và nội dung)**
+        const formattedSteps = [];
+        for (let i = 0; i < food.steps.length; i++) {
+            const currentStep = food.steps[i].trim();
+            const nextStep = food.steps[i + 1] ? food.steps[i + 1].trim() : "";
+
+            // Nếu phần tử hiện tại là số thứ tự (1., 2., ...) và có nội dung tiếp theo
+            if (/^\d+\.$/.test(currentStep) && nextStep) {
+                formattedSteps.push(`${currentStep} ${nextStep}`);
+                i++; // Bỏ qua phần mô tả đã ghép
+            }
+        }
+
         // Kiểm tra ingredients có phải là mảng không trước khi format
         const formattedFood = {
             ...food._doc,
             ingredients: Array.isArray(food.ingredients)
-                ? food.ingredients
-                    .flatMap(ingredient => 
-                        ingredient
-                            .split(/\r\n|\n/)
-                            .map(i => i.trim())
-                            .filter(i => i !== "")
-                    )
+                ? food.ingredients.flatMap(ingredient =>
+                    ingredient.split(/\r\n|\n/)
+                        .map(i => i.trim())
+                        .filter(i => i !== "")
+                )
                 : [],
+
+            steps: formattedSteps,
         };
 
         return res.json({ success: true, data: formattedFood });

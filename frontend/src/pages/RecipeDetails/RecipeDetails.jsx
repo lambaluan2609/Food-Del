@@ -1,7 +1,7 @@
 // src/pages/RecipeDetails/RecipeDetails.jsx
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { FaClock, FaStar } from 'react-icons/fa'
+import { FaClock, FaStar, FaAppleAlt, FaUserAlt } from 'react-icons/fa'
 import './RecipeDetails.css'
 
 const RecipeDetails = () => {
@@ -11,33 +11,33 @@ const RecipeDetails = () => {
     const url = import.meta.env.VITE_API_URL;
     useEffect(() => {
         const fetchRecipe = async () => {
-    try {
-        const response = await fetch(url+`/api/food/detail/${id}`)
-        console.log('Response status:', response.status)
-        console.log('Response headers:', response.headers.get('content-type'))
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`)
+            try {
+                const response = await fetch(url + `/api/food/detail/${id}`)
+                console.log('Response status:', response.status)
+                console.log('Response headers:', response.headers.get('content-type'))
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`)
+                }
+
+                const result = await response.json() // Lỗi có thể nằm ở đây
+                console.log('Result data:', result)
+
+                if (!result.success) {
+                    throw new Error('Failed to fetch recipe data')
+                }
+
+                setRecipe(result.data)
+                setError(null)
+            } catch (error) {
+                console.error("Error fetching recipe:", error)
+                setError(error.message)
+                setRecipe(null)
+            }
         }
-        
-        const result = await response.json() // Lỗi có thể nằm ở đây
-        console.log('Result data:', result)
-
-        if (!result.success) {
-            throw new Error('Failed to fetch recipe data')
-        }
-
-        setRecipe(result.data)
-        setError(null)
-    } catch (error) {
-        console.error("Error fetching recipe:", error)
-        setError(error.message)
-        setRecipe(null)
-    }
-}
 
 
-        
+
         fetchRecipe()
     }, [id])
 
@@ -80,6 +80,20 @@ const RecipeDetails = () => {
                 <img src={recipe.image} alt={recipe.name} />
             </div>
 
+            {/* Description Section */}
+            <section className="description-section">
+                <h2 className="section-title">Mô tả</h2>
+                <div className="description-grid">
+                    {recipe.description && (
+                        <div className="recipe-description">
+                            <p>{recipe.description}</p>
+                        </div>
+                    )}
+                </div>
+            </section>
+
+
+
             {/* Quick Info Grid */}
             <div className="quick-info-grid">
                 <div className="info-item">
@@ -87,6 +101,20 @@ const RecipeDetails = () => {
                     <div>
                         <h3>Thời gian nấu</h3>
                         <p>{recipe.cookingTime} phút</p>
+                    </div>
+                </div>
+                <div className="info-item">
+                    <FaAppleAlt className="info-icon" /> {/* Bạn có thể thay bằng icon khác nếu cần */}
+                    <div>
+                        <h3>Lượng calo</h3>
+                        <p>{recipe.calories} cal</p>
+                    </div>
+                </div>
+                <div className="info-item">
+                    <FaUserAlt className="info-icon" /> {/* Bạn có thể thay bằng icon khác nếu cần */}
+                    <div>
+                        <h3>Khẩu phần</h3>
+                        <p>{recipe.servings} người</p>
                     </div>
                 </div>
                 {/* ... các info item khác */}

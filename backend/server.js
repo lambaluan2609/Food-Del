@@ -3,6 +3,7 @@ import cors from "cors"
 import { connectDB } from "./config/db.js"
 import foodRouter from "./routes/foodRoute.js"
 import userRouter from "./routes/userRoute.js"
+import productRouter from "./routes/productRoute.js"
 import 'dotenv/config'
 
 //app config
@@ -20,14 +21,15 @@ connectDB();
 app.use("/api/food", foodRouter)
 app.use("/images", express.static("uploads"))
 app.use("/api/user", userRouter)
+app.use("/api/product", productRouter)
 
 app.get("/", (req, res) => {
-    res.status(200).send("API WORKING") 
+    res.status(200).send("API WORKING")
 })
 
 app.listen(port, () => {
     console.log(`server is running on port ${port}`)
 })
-    
+
 
 

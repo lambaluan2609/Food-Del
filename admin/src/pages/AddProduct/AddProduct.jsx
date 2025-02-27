@@ -14,6 +14,9 @@ const AddProduct = ({ url }) => {
         stock: "",
         brand: "",
         origin: "",
+        ingredients: "",
+        usageInstructions: "",
+        storageInstructions: "",
         // weight: "",
         // discount: "",
         // ratings: "",
@@ -43,9 +46,12 @@ const AddProduct = ({ url }) => {
                     stock: "",
                     brand: "",
                     origin: "",
-                    weight: "",
-                    discount: "",
-                    ratings: "",
+                    ingredients: "",
+                    usageInstructions: "",
+                    storageInstructions: "",
+                    // weight: "",
+                    // discount: "",
+                    // ratings: "",
                 });
                 setImage(false);
                 toast.success(response.data.message);
@@ -108,6 +114,21 @@ const AddProduct = ({ url }) => {
                 <div className="add-meta flex-col">
                     <p>Origin</p>
                     <input onChange={onChangeHandler} value={data.origin} type="text" name="origin" placeholder='Country of Origin' />
+                </div>
+
+                <div className="add-meta flex-col">
+                    <p>Ingredients</p>
+                    <input onChange={onChangeHandler} value={data.ingredients} type="text" name="ingredients" placeholder='Ingredients' />
+                </div>
+
+                <div className="add-meta flex-col">
+                    <p>Usage Instructions</p>
+                    <input onChange={onChangeHandler} value={data.usageInstructions} type="text" name="usageInstructions" placeholder='Usage Instructions' />
+                </div>
+
+                <div className="add-meta flex-col">
+                    <p>Storage Instructions</p>
+                    <input onChange={onChangeHandler} value={data.storageInstructions} type="text" name="storageInstructions" placeholder='Storage Instructions' />
                 </div>
 
                 {/* <div className="add-meta flex-col">

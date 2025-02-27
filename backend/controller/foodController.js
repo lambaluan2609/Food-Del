@@ -89,6 +89,30 @@ const listFood = async (req, res) => {
     }
 };
 
+const searchFood = async (req, res) => {
+    try {
+        const { name } = req.query;
+
+        if (!name) {
+            return res.status(400).json({ success: false, message: "Please provide a search term" });
+        }
+
+        // Tìm kiếm không phân biệt chữ hoa chữ thường (sử dụng regex)
+        const foods = await foodModel.find({
+            name: { $regex: name, $options: "i" } // "i" giúp tìm kiếm không phân biệt chữ hoa/thường
+        });
+
+        if (foods.length === 0) {
+            return res.status(404).json({ success: false, message: "No recipes found" });
+        }
+
+        res.json({ success: true, data: foods });
+    } catch (error) {
+        console.error("Error searching food:", error);
+        res.status(500).json({ success: false, message: "Error searching food recipe" });
+    }
+};
+
 
 
 const getFoodDetail = async (req, res) => {
@@ -227,4 +251,4 @@ const updateFood = async (req, res) => {
 };
 
 
-export { addFood, listFood, removeFood, getFoodDetail, updateFood };
+export { addFood, listFood, removeFood, getFoodDetail, updateFood, searchFood };

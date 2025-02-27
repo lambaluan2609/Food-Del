@@ -48,17 +48,44 @@ const addProduct = async (req, res) => {
 };
 
 // Lấy danh sách sản phẩm
+// 🔥 Lấy danh sách sản phẩm có format chuẩn
 const listProducts = async (req, res) => {
     try {
         const products = await productModel.find();
-        res.json({ success: true, data: products });
+
+        // 🔥 Format dữ liệu trước khi trả về
+        const formattedProducts = products.map(product => ({
+            ...product._doc,
+
+            // Format description để xuống dòng đúng cách
+            description: product.description
+                ? product.description.split(/\r\n|\n/).map(line => line.trim()).filter(line => line !== "")
+                : [],
+
+            // Format ingredients thành danh sách
+            ingredients: product.ingredients
+                ? product.ingredients.split(/\r\n|\n/).map(i => i.trim()).filter(i => i !== "")
+                : [],
+
+            // Format usageInstructions
+            usageInstructions: product.usageInstructions
+                ? product.usageInstructions.split(/\r\n|\n/).map(i => i.trim()).filter(i => i !== "")
+                : [],
+
+            // Format storageInstructions
+            storageInstructions: product.storageInstructions
+                ? product.storageInstructions.split(/\r\n|\n/).map(i => i.trim()).filter(i => i !== "")
+                : []
+        }));
+
+        res.json({ success: true, data: formattedProducts });
     } catch (error) {
         console.error("Error fetching products:", error.message);
         res.status(500).json({ success: false, message: "Error fetching products" });
     }
 };
 
-// Lấy chi tiết sản phẩm theo ID
+// 🔥 Lấy chi tiết sản phẩm theo ID có format chuẩn
 const getProductDetail = async (req, res) => {
     try {
         const { id } = req.params;
@@ -73,12 +100,34 @@ const getProductDetail = async (req, res) => {
             return res.status(404).json({ success: false, message: "Product not found" });
         }
 
-        res.json({ success: true, data: product });
+        // 🔥 Format dữ liệu trước khi trả về
+        const formattedProduct = {
+            ...product._doc,
+
+            description: product.description
+                ? product.description.split(/\r\n|\n/).map(line => line.trim()).filter(line => line !== "")
+                : [],
+
+            ingredients: product.ingredients
+                ? product.ingredients.split(/\r\n|\n/).map(i => i.trim()).filter(i => i !== "")
+                : [],
+
+            usageInstructions: product.usageInstructions
+                ? product.usageInstructions.split(/\r\n|\n/).map(i => i.trim()).filter(i => i !== "")
+                : [],
+
+            storageInstructions: product.storageInstructions
+                ? product.storageInstructions.split(/\r\n|\n/).map(i => i.trim()).filter(i => i !== "")
+                : []
+        };
+
+        res.json({ success: true, data: formattedProduct });
     } catch (error) {
         console.error("Error fetching product:", error.message);
         res.status(500).json({ success: false, message: "Error fetching product" });
     }
 };
+
 
 // Xóa sản phẩm
 const removeProduct = async (req, res) => {

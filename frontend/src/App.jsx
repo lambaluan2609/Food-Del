@@ -10,6 +10,7 @@ import Verify from './pages/Verify/Verify'
 import MyOrders from './pages/MyOrders/MyOrders'
 import QRCodePage from './pages/ZaloQRCode/qrCode.jsx'
 import RecipeDetails from './pages/RecipeDetails/RecipeDetails.jsx'
+import SearchResults from './pages/SearchResults/SearchResults.jsx'
 
 
 
@@ -30,7 +31,8 @@ const App = () => {
           <Route path='/verify' element={<Verify />} />
           <Route path='/qrcode' element={<QRCodePage />} />
           <Route path='/myorders' element={<MyOrders />} />
-    
+          <Route path='/search' element={<SearchResults />} />
+
 
           <Route path="*" element={<Navigate to="/" />} />
 

@@ -1,0 +1,124 @@
+.add-product {
+    width: 50%;
+    margin: 50px auto;
+    color: #4a4a4a;
+    font-size: 16px;
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Layout chính */
+.add-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+/* Khu vực upload ảnh */
+.add-img-upload {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.add-img-upload img {
+    width: 100%;
+    max-width: 250px;
+    border-radius: 10px;
+    border: 2px solid #ddd;
+}
+
+.add-img-upload label {
+    cursor: pointer;
+}
+
+.add-img-upload input {
+    display: none;
+}
+
+/* Khu vực nhập thông tin */
+.add-inputs {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.add-inputs div {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Input Styling */
+.add-product-name input,
+.add-product-description textarea,
+.add-category select,
+.add-meta input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.add-product-name input:focus,
+.add-product-description textarea:focus,
+.add-category select:focus,
+.add-meta input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Gom các input nhỏ */
+.add-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Bố trí hàng ngang cho một số input */
+.add-meta-group {
+    display: flex;
+    gap: 15px;
+}
+
+/* Nút Submit */
+.add-btn {
+    width: 100%;
+    padding: 12px;
+    background: #007bff;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.add-btn:hover {
+    background: #0056b3;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .add-product {
+        width: 90%;
+        padding: 20px;
+    }
+
+    .add-container {
+        flex-direction: column;
+    }
+}

@@ -135,7 +135,7 @@ const Add = ({ url }) => {
                     </div>
                     <div className="add-meta flex-col">
                         <p>Youtube URL</p>
-                        <input onChange={onChangeHandler} value={data.youtubeUrl} type="text" name="youtubeUrl" placeholder='Enter youtube url' />
+                        <input onChange={onChangeHandler} value={data.youtubeUrl} type="text" name="youtubeUrl" placeholder='Enter youtube url' required />
                     </div>
                 </div>
 

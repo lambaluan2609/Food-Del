@@ -18,21 +18,29 @@ const AddProduct = ({ url }) => {
         ingredients: "",
         usageInstructions: "",
         storageInstructions: "",
-        // weight: "",
-        // discount: "",
-        // ratings: "",
     });
 
+    // Xử lý thay đổi input
     const onChangeHandler = (event) => {
         const { name, value } = event.target;
         setData((prevData) => ({ ...prevData, [name]: value }));
     };
 
+    // Xử lý gửi form
     const onSubmitHandler = async (event) => {
         event.preventDefault();
         const formData = new FormData();
-        for (const key in data) {
-            formData.append(key, data[key]);
+
+        // Nếu không nhập giá khuyến mãi, gán bằng giá niêm yết
+        const finalPrice = data.price.trim() === "" ? data.originalPrice : data.price;
+
+        const productData = {
+            ...data,
+            price: finalPrice  // Gán giá khuyến mãi hoặc lấy giá niêm yết nếu khuyến mãi không có
+        };
+
+        for (const key in productData) {
+            formData.append(key, productData[key]);
         }
         formData.append("image", image);
 
@@ -51,9 +59,6 @@ const AddProduct = ({ url }) => {
                     ingredients: "",
                     usageInstructions: "",
                     storageInstructions: "",
-                    // weight: "",
-                    // discount: "",
-                    // ratings: "",
                 });
                 setImage(false);
                 toast.success(response.data.message);
@@ -70,7 +75,7 @@ const AddProduct = ({ url }) => {
         <div className='add-product'>
             <form className="flex-col" onSubmit={onSubmitHandler}>
                 <div className="add-img-upload flex-col">
-                    <p>Upload Image</p>
+                    <p>Tải hình ảnh</p>
                     <label htmlFor="image">
                         <img src={image ? URL.createObjectURL(image) : assets.upload_area} alt="" />
                     </label>
@@ -78,17 +83,17 @@ const AddProduct = ({ url }) => {
                 </div>
 
                 <div className="add-product-name flex-col">
-                    <p>Product Name</p>
-                    <input onChange={onChangeHandler} value={data.name} type="text" name='name' placeholder='Enter name' required />
+                    <p>Tên sản phẩm</p>
+                    <input onChange={onChangeHandler} value={data.name} type="text" name='name' placeholder='Nhập tên sản phẩm' required />
                 </div>
 
                 <div className="add-product-description flex-col">
-                    <p>Description</p>
-                    <textarea onChange={onChangeHandler} value={data.description} name="description" rows="4" placeholder='Enter description' required></textarea>
+                    <p>Mô tả</p>
+                    <textarea onChange={onChangeHandler} value={data.description} name="description" rows="4" placeholder='Nhập mô tả sản phẩm' required></textarea>
                 </div>
 
                 <div className="add-category flex-col">
-                    <p>Category</p>
+                    <p>Phân loại</p>
                     <select onChange={onChangeHandler} name="category">
                         <option value="Thực phẩm">Thực phẩm</option>
                         <option value="Đồ uống">Đồ uống</option>
@@ -97,61 +102,46 @@ const AddProduct = ({ url }) => {
                 </div>
 
                 <div className='add-meta flex-col'>
-                    <p>Original Price</p>
-                    <input onChange={onChangeHandler} value={data.originalPrice} type='number' name='originalPrice' placeholder='100000' />
+                    <p>Giá niêm yết (VND)</p>
+                    <input onChange={onChangeHandler} value={data.originalPrice} type='number' name='originalPrice' placeholder='100000' required />
                 </div>
 
                 <div className="add-meta flex-col">
-                    <p>Price (VND)</p>
-                    <input onChange={onChangeHandler} value={data.price} type="number" name="price" placeholder='100000' required />
+                    <p>Giá khuyến mãi (VND) <span className="optional-text">(Bỏ trống nếu không có giảm giá)</span></p>
+                    <input onChange={onChangeHandler} value={data.price} type="number" name="price" placeholder='100000' />
                 </div>
 
                 <div className="add-meta flex-col">
-                    <p>Stock</p>
+                    <p>Số lượng tồn kho</p>
                     <input onChange={onChangeHandler} value={data.stock} type="number" name="stock" placeholder='50' required />
                 </div>
 
                 <div className="add-meta flex-col">
-                    <p>Brand</p>
-                    <input onChange={onChangeHandler} value={data.brand} type="text" name="brand" placeholder='Brand Name' required />
+                    <p>Thương hiệu</p>
+                    <input onChange={onChangeHandler} value={data.brand} type="text" name="brand" placeholder='Nhập thương hiệu' required />
                 </div>
 
                 <div className="add-meta flex-col">
-                    <p>Origin</p>
-                    <input onChange={onChangeHandler} value={data.origin} type="text" name="origin" placeholder='Country of Origin' />
+                    <p>Xuất xứ</p>
+                    <input onChange={onChangeHandler} value={data.origin} type="text" name="origin" placeholder='Nhập xuất xứ' />
                 </div>
 
                 <div className="add-meta flex-col">
-                    <p>Ingredients</p>
-                    <input onChange={onChangeHandler} value={data.ingredients} type="text" name="ingredients" placeholder='Ingredients' />
+                    <p>Thành phần</p>
+                    <input onChange={onChangeHandler} value={data.ingredients} type="text" name="ingredients" placeholder='Nhập thành phần' />
                 </div>
 
                 <div className="add-meta flex-col">
-                    <p>Usage Instructions</p>
-                    <input onChange={onChangeHandler} value={data.usageInstructions} type="text" name="usageInstructions" placeholder='Usage Instructions' />
+                    <p>Hướng dẫn sử dụng</p>
+                    <input onChange={onChangeHandler} value={data.usageInstructions} type="text" name="usageInstructions" placeholder='Nhập hướng dẫn sử dụng' />
                 </div>
 
                 <div className="add-meta flex-col">
-                    <p>Storage Instructions</p>
-                    <input onChange={onChangeHandler} value={data.storageInstructions} type="text" name="storageInstructions" placeholder='Storage Instructions' />
+                    <p>Hướng dẫn bảo quản</p>
+                    <input onChange={onChangeHandler} value={data.storageInstructions} type="text" name="storageInstructions" placeholder='Nhập hướng dẫn bảo quản' />
                 </div>
 
-                {/* <div className="add-meta flex-col">
-                    <p>Weight / Volume</p>
-                    <input onChange={onChangeHandler} value={data.weight} type="text" name="weight" placeholder='500g' />
-                </div>
-
-                <div className="add-meta flex-col">
-                    <p>Discount (%)</p>
-                    <input onChange={onChangeHandler} value={data.discount} type="number" name="discount" placeholder='10' />
-                </div>
-
-                <div className="add-meta flex-col">
-                    <p>Ratings (0-5)</p>
-                    <input onChange={onChangeHandler} value={data.ratings} type="number" name="ratings" placeholder='4.5' />
-                </div> */}
-
-                <button type='submit' className='add-btn'>ADD PRODUCT</button>
+                <button type='submit' className='add-btn'>THÊM SẢN PHẨM</button>
             </form>
         </div>
     );

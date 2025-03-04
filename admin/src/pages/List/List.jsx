@@ -44,13 +44,13 @@ const List = ({ url }) => {
 
   return (
     <div className="list add flex-col">
-      <p>All Foods List</p>
+      <p>Tất cả công thức</p>
       <div className="list-table">
         <div className="list-table-format title">
-          <b>Image</b>
-          <b>Name</b>
-          <b>Category</b>
-          <b>Difficulty</b>
+          <b>Hình ảnh</b>
+          <b>Tên công thức</b>
+          <b>Phân loại</b>
+          <b>Độ khó</b>
           <b>Action</b>
         </div>
         {list.map((item, index) => (

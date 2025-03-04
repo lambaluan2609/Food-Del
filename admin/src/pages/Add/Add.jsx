@@ -64,7 +64,7 @@ const Add = ({ url }) => {
         <div className='add'>
             <form className="flex-col" onSubmit={onSubmitHandler}>
                 <div className="add-img-upload flex-col">
-                    <p>Upload Image</p>
+                    <p>Tải hình ảnh</p>
                     <label htmlFor="image">
                         <img src={image ? URL.createObjectURL(image) : assets.upload_area} alt="" />
                     </label>
@@ -72,18 +72,18 @@ const Add = ({ url }) => {
                 </div>
 
                 <div className="add-product-name flex-col">
-                    <p>Recipe Name</p>
+                    <p>Tên công thức</p>
                     <input onChange={onChangeHandler} value={data.name} type="text" name='name' placeholder='Enter name' required />
                 </div>
 
                 <div className="add-product-description flex-col">
-                    <p>Description</p>
+                    <p>Mô tả</p>
                     <textarea onChange={onChangeHandler} value={data.description} name="description" rows="4" placeholder='Enter description' required></textarea>
                 </div>
 
                 <div className="add-category-price">
                     <div className='add-category flex-col'>
-                        <p>Category</p>
+                        <p>Phân loại</p>
                         <select onChange={onChangeHandler} name="category">
                             <option value="Món chính">Món chính</option>
                             <option value="Healthy">Healthy</option>
@@ -98,39 +98,39 @@ const Add = ({ url }) => {
 
                 <div className="add-product-details">
                     <div className="add-ingredients flex-col">
-                        <p>Ingredients</p>
+                        <p>Nguyên liệu</p>
                         <textarea onChange={onChangeHandler} value={data.ingredients} name="ingredients" rows="3" placeholder='List ingredients' required></textarea>
                     </div>
 
                     <div className="add-steps flex-col">
-                        <p>Steps</p>
+                        <p>Các bước thực hiện</p>
                         <textarea onChange={onChangeHandler} value={data.steps} name="steps" rows="4" placeholder='Describe steps' required></textarea>
                     </div>
 
                     <div className="add-meta flex-col">
-                        <p>Cooking Time (minutes)</p>
+                        <p>Thời gian nấu (phút)</p>
                         <input onChange={onChangeHandler} value={data.cookingTime} type="number" name="cookingTime" placeholder='30' required />
                     </div>
                     <div className="add-meta flex-col">
-                        <p>Calories (cal)</p>
+                        <p>Lượng Calories (cal)</p>
                         <input onChange={onChangeHandler} value={data.calories} type="number" name="calories" placeholder='100' required />
                     </div>
                     <div className="add-meta flex-col">
-                        <p>Servings</p>
+                        <p>Khẩu phần</p>
                         <input onChange={onChangeHandler} value={data.servings} type="number" name="servings" placeholder='2' required />
                     </div>
 
                     <div className="add-meta flex-col">
-                        <p>Difficulty</p>
+                        <p>Độ khó</p>
                         <select onChange={onChangeHandler} name="difficulty">
-                            <option value="Easy">Easy</option>
-                            <option value="Medium">Medium</option>
-                            <option value="Hard">Hard</option>
+                            <option value="Easy">Dễ</option>
+                            <option value="Medium">Vừa</option>
+                            <option value="Hard">Khó</option>
                         </select>
                     </div>
 
                     <div className="add-meta flex-col">
-                        <p>Author</p>
+                        <p>Tác giả</p>
                         <input onChange={onChangeHandler} value={data.author} type="text" name="author" placeholder='Enter author name' required />
                     </div>
                     <div className="add-meta flex-col">

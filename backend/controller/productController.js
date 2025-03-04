@@ -19,6 +19,14 @@ const addProduct = async (req, res) => {
             await blob.makePublic();
             const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
 
+            let { price, originalPrice } = req.body;
+
+            // Nếu không nhập giá khuyến mãi, gán bằng giá niêm yết
+            if (!price) {
+                price = originalPrice;
+            }
+
+
             const product = new productModel({
                 name: req.body.name,
                 description: req.body.description,

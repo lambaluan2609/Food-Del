@@ -1,0 +1,51 @@
+/* Tổng thể trang sản phẩm */
+.product-page {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+/* Tiêu đề */
+.product-page h2 {
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Bộ lọc danh mục */
+.category-filter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.category-filter label {
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+.category-filter select {
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+/* Danh sách sản phẩm */
+.product-display-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 30px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* Không có sản phẩm */
+.no-products {
+    font-size: 18px;
+    color: #777;
+    text-align: center;
+    margin-top: 20px;
+}

@@ -11,6 +11,8 @@ import MyOrders from './pages/MyOrders/MyOrders'
 import QRCodePage from './pages/ZaloQRCode/qrCode.jsx'
 import RecipeDetails from './pages/RecipeDetails/RecipeDetails.jsx'
 import SearchResults from './pages/SearchResults/SearchResults.jsx'
+import ProductPage from './pages/ProductPage/ProductPage.jsx'
+import ProductDetail from './pages/ProductDetail/ProductDetail.jsx'
 
 
 
@@ -32,8 +34,8 @@ const App = () => {
           <Route path='/qrcode' element={<QRCodePage />} />
           <Route path='/myorders' element={<MyOrders />} />
           <Route path='/search' element={<SearchResults />} />
-
-
+          <Route path='/product' element={<ProductPage />} />
+          <Route path="/product/detail/:id" element={<ProductDetail />} />
           <Route path="*" element={<Navigate to="/" />} />
 
         </Routes>

@@ -24,6 +24,7 @@ const addProduct = async (req, res) => {
                 description: req.body.description,
                 image: publicUrl,
                 category: req.body.category,
+                originalPrice: req.body.originalPrice,
                 price: req.body.price,
                 stock: req.body.stock,
                 brand: req.body.brand,

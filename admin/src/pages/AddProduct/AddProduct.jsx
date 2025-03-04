@@ -10,6 +10,7 @@ const AddProduct = ({ url }) => {
         name: "",
         description: "",
         category: "Thực phẩm",
+        originalPrice: "",
         price: "",
         stock: "",
         brand: "",
@@ -42,6 +43,7 @@ const AddProduct = ({ url }) => {
                     name: "",
                     description: "",
                     category: "Thực phẩm",
+                    originalPrice: "",
                     price: "",
                     stock: "",
                     brand: "",
@@ -91,9 +93,12 @@ const AddProduct = ({ url }) => {
                         <option value="Thực phẩm">Thực phẩm</option>
                         <option value="Đồ uống">Đồ uống</option>
                         <option value="Gia vị">Gia vị</option>
-                        <option value="Hóa phẩm">Hóa phẩm</option>
-                        <option value="Đồ dùng gia đình">Đồ dùng gia đình</option>
                     </select>
+                </div>
+
+                <div className='add-meta flex-col'>
+                    <p>Original Price</p>
+                    <input onChange={onChangeHandler} value={data.originalPrice} type='number' name='originalPrice' placeholder='100000' />
                 </div>
 
                 <div className="add-meta flex-col">

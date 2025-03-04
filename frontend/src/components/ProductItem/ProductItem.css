@@ -1,0 +1,163 @@
+/* Product Item Container */
+.product-item {
+    width: 300px;
+    height: 420px;
+    margin: auto;
+    border-radius: 15px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+    transition: 0.3s ease-in-out;
+    animation: fadeIn 1s;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: white;
+    border: 2px solid #4CAF50;
+    /* Màu xanh lá */
+    position: relative;
+}
+
+.product-item:hover {
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+}
+
+/* Discount Badge */
+.discount-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #D32F2F;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+/* Product Image */
+.product-item-image-container {
+    position: relative;
+    text-align: center;
+}
+
+.product-item-image {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 15px 15px 0px 0px;
+}
+
+/* Cart Action Buttons */
+.product-item-image-container .add {
+    width: 35px;
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    cursor: pointer;
+    border-radius: 50%;
+    background-color: #4CAF50;
+    padding: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: 0.3s ease-in-out;
+}
+
+.product-item-image-container .add:hover {
+    transform: scale(1.1);
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Cart Item Counter */
+.product-item-counter {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px;
+    border-radius: 50px;
+    background-color: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-item-counter img {
+    width: 30px;
+}
+
+/* Product Info */
+.product-item-info {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Product Name & Brand */
+.product-item-name-brand {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.product-item-name-brand p {
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+}
+
+.product-item-brand {
+    font-size: 14px;
+    color: #777;
+    font-style: italic;
+}
+
+/* Product Description */
+.product-item-desc {
+    font-size: 12px;
+    color: #676767;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    line-height: 1.4;
+    margin-bottom: 10px;
+}
+
+/* Pricing Layout */
+.product-item-prices {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+/* Sale Price */
+.sale-price {
+    font-size: 20px;
+    font-weight: bold;
+    color: #E91E63;
+}
+
+/* Original Price */
+.original-price {
+    font-size: 16px;
+    color: #999;
+    text-decoration: line-through;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .product-item {
+        width: 260px;
+        height: auto;
+    }
+
+    .product-item-image {
+        height: 200px;
+    }
+
+    .product-item-info {
+        padding: 15px;
+    }
+}

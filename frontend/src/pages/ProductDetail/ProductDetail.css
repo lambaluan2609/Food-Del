@@ -1,0 +1,152 @@
+/* Tổng thể trang sản phẩm */
+.product-detail {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+/* Phần chính: Hình ảnh & Thông tin */
+.product-main {
+    display: flex;
+    gap: 30px;
+}
+
+/* Ảnh sản phẩm */
+.product-image {
+    flex: 1;
+    text-align: center;
+}
+
+.product-image img {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.thumbnail img {
+    width: 50px;
+    height: 50px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+/* Thông tin sản phẩm */
+.product-info {
+    flex: 1;
+}
+
+.product-info h1 {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.sku {
+    font-size: 14px;
+    color: #777;
+}
+
+.original-price {
+    font-size: 16px;
+    color: #999;
+}
+
+.sale-price {
+    font-size: 20px;
+    font-weight: bold;
+    color: #E91E63;
+}
+
+.status {
+    font-size: 16px;
+}
+
+.status .instock {
+    color: green;
+    font-weight: bold;
+}
+
+.shipping {
+    font-size: 14px;
+    color: #444;
+}
+
+/* Chọn số lượng */
+.quantity-selector {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.quantity-selector button {
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+    background: #eee;
+    border: none;
+    cursor: pointer;
+}
+
+/* Nút thêm vào giỏ */
+.add-to-cart {
+    display: block;
+    width: 100%;
+    margin-top: 15px;
+    padding: 10px;
+    font-size: 18px;
+    background-color: #D32F2F;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.add-to-cart:hover {
+    background-color: #B71C1C;
+}
+
+/* Mô tả và thông tin chi tiết */
+.product-details {
+    margin-top: 40px;
+    display: flex;
+    gap: 30px;
+}
+
+.description {
+    flex: 1;
+}
+
+.info-table {
+    flex: 1;
+}
+
+.info-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.info-table td {
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+/* Sản phẩm liên quan */
+.related-products {
+    margin-top: 50px;
+}
+
+.product-list {
+    display: flex;
+    gap: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .product-main {
+        flex-direction: column;
+    }
+
+    .product-details {
+        flex-direction: column;
+    }
+}

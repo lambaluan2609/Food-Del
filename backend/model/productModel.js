@@ -5,6 +5,7 @@ const productSchema = new mongoose.Schema({
     description: { type: String, required: true },  // Mô tả sản phẩm
     image: { type: String, required: true },  // Ảnh sản phẩm
     category: { type: String, required: true },  // Danh mục sản phẩm (VD: "Nước giải khát", "Thực phẩm tươi sống")
+    originalPrice: { type: Number, required: true },  // Giá niêm yết
     price: { type: Number, required: true },  // Giá sản phẩm
     stock: { type: Number, required: true, default: 0 },  // Số lượng tồn kho
     brand: { type: String, required: true },  // Thương hiệu sản phẩm

@@ -50,17 +50,21 @@ const ProductDetail = () => {
                     <h1>{product.name}</h1>
                     <p className="sku">SKU: {product._id}</p>
                     {/* <p className="original-price">Giá niêm yết: <del>{(product.price * 1.2).toFixed(2)} ₫</del></p> */}
-                    {/* Nếu có originalPrice & price khác nhau, hiển thị cả hai */}
-                    {product.originalPrice && product.price < product.originalPrice ? (
+                    {/* Hiển thị giá niêm yết và giá khuyến mãi */}
+                    {product.originalPrice && product.originalPrice > product.price ? (
                         <>
-                            <p className="original-price">Giá niêm yết: <del>{product.originalPrice.toFixed(2)} ₫</del></p>
-                            <p className="sale-price">Giá khuyến mãi: <span>{product.price.toFixed(2)} ₫</span></p>
+                            <p className="original-price">
+                                Giá niêm yết: <del>{product.originalPrice.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}</del>
+                            </p>
+                            <p className="sale-price">
+                                Giá khuyến mãi: <span>{product.price.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}</span>
+                            </p>
                         </>
                     ) : (
-                        <p className="sale-price">Giá: <span>{product.price.toFixed(2)} ₫</span></p>
+                        <p className="sale-price">
+                            Giá: <span>{product.price.toLocaleString("vi-VN", { style: "currency", currency: "VND" })}</span>
+                        </p>
                     )}
-                    <p className="status">Tình trạng: <span className="instock">Còn hàng</span></p>
-                    <p className="shipping">Miễn phí giao hàng đơn từ 300.000 ₫</p>
 
                     <div className="quantity-selector">
                         <label>Số lượng:</label>

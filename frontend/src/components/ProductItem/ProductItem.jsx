@@ -4,7 +4,7 @@ import { StoreContext } from '../../context/StoreContext';
 import { useNavigate } from 'react-router-dom';
 import assets from '../../assets/assets';
 
-const ProductItem = ({ id, name, price, originalPrice, description, image, brand }) => {
+const ProductItem = ({ id, name, price, originalPrice, description, image }) => {
     const { cartItems, addToCart, removeFromCart } = useContext(StoreContext);
     const navigate = useNavigate();
 
@@ -56,7 +56,7 @@ const ProductItem = ({ id, name, price, originalPrice, description, image, brand
 
             <div className="product-item-info">
                 <p className="product-item-name">{name}</p>
-                <p className="product-item-brand">{brand}</p>
+                {/* <p className="product-item-brand">{brand}</p> */}
                 <p className="product-item-desc">
                     {description && description.length > 80 ? description.slice(0, 80) + "..." : description}
                 </p>

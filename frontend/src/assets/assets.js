@@ -28,6 +28,11 @@ import logout_icon from './logout_icon.png'
 import parcel_icon from './parcel_icon.png'
 import zaloPayLogo from './zaloPayLogo.png'
 import zaloLogo from './zaloLogo.png'
+import banner_1 from './Banner_1.png'
+import banner_2 from './Banner_2.png'
+import banner_3 from './Banner_3.png'
+import banner_4 from './Banner_4.png'
+import banner_5 from './Banner_5.png'
 
 export const assets = {
     logo,
@@ -51,7 +56,12 @@ export const assets = {
     bag_icon,
     parcel_icon,
     zaloPayLogo,
-    zaloLogo
+    zaloLogo,
+    banner_1,
+    banner_2,
+    banner_3,
+    banner_4,
+    banner_5
 }
 
 export const menu_list = [

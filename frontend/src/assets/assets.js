@@ -74,7 +74,7 @@ export const menu_list = [
         menu_image: menu_2
     },
     {
-        menu_name: "Thuần chay",
+        menu_name: "Chay",
         menu_image: menu_3
     },
     {

@@ -13,9 +13,6 @@ const productSchema = new mongoose.Schema({
     ingredients: { type: String, required: false },  // Thành phần sản phẩm
     usageInstructions: { type: String, required: false },  // Hướng dẫn sử dụng
     storageInstructions: { type: String, required: false },  // Hướng dẫn bảo quản
-    // weight: { type: String, required: false },  // Khối lượng hoặc dung tích
-    // discount: { type: Number, default: 0 },  // Giảm giá (%)
-    // ratings: { type: Number, min: 0, max: 5, default: 0 },  // Đánh giá trung bình
     createdAt: { type: Date, default: Date.now },  // Thời gian thêm sản phẩm
 });
 

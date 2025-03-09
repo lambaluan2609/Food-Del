@@ -1,15 +1,37 @@
-.food-display{
+.food-display {
     margin-top: 30px;
 
 }
-.food-display h2{
-    font-size: max(2vw,24px);
+
+.food-display h2 {
+    font-size: max(2vw, 24px);
     font-weight: 600;
 }
-.food-display-list{
+
+.food-display-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(240px,1fr));
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     margin-top: 30px;
     gap: 30px;
     row-gap: 50px;
+}
+
+.pagination button {
+    padding: 5px 10px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.pagination button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.no-data {
+    text-align: center;
+    font-style: italic;
+    margin: 10px 0;
 }

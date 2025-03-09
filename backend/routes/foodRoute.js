@@ -10,7 +10,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 foodRouter.post("/add", upload.single("image"), addFood);
 foodRouter.get("/list", listFood);
 foodRouter.get("/detail/:id", getFoodDetail);
-foodRouter.delete("/remove", removeFood);
+foodRouter.delete("/remove/:id", removeFood);
 foodRouter.put("/update/:id", upload.single("image"), updateFood);
 foodRouter.get("/search", searchFood);
 

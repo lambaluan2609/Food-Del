@@ -53,20 +53,41 @@ const addFood = async (req, res) => {
 // List all food recipes
 const listFood = async (req, res) => {
     try {
-        const foods = await foodModel.find();
+        let { page = 1, limit = 10, category } = req.query;
 
-        // Format lại ingredients & steps trước khi trả về
+        // Chuyển đổi page & limit thành số nguyên, đảm bảo không âm
+        page = Math.max(parseInt(page), 1);
+        limit = Math.max(parseInt(limit), 1);
+
+        // Nếu có category, giải mã UTF-8 (fix lỗi dấu tiếng Việt)
+        if (category) {
+            category = decodeURIComponent(category);
+        }
+
+        // Tạo bộ lọc nếu có category
+        const query = category && category !== "All" ? { category } : {};
+
+        // Đếm tổng số món ăn theo category (nếu có)
+        const totalItems = await foodModel.countDocuments(query);
+
+        // Lấy danh sách món ăn có phân trang
+        const foods = await foodModel
+            .find(query, { name: 1, description: 1, image: 1, category: 1, difficulty: 1, ingredients: 1, steps: 1 }) // Chỉ lấy trường cần thiết
+            .skip((page - 1) * limit)
+            .limit(limit);
+
+        // **Format lại ingredients & steps trước khi trả về**
         const formattedFoods = foods.map(food => ({
             ...food._doc,
 
-            // Format ingredients như cũ
+            // Format ingredients: Chia nhỏ từng dòng
             ingredients: Array.isArray(food.ingredients)
                 ? food.ingredients.flatMap(ingredient =>
                     ingredient.split(/\r\n|\n/).map(i => i.trim()).filter(i => i !== "")
                 )
                 : [],
 
-            // Format steps: ghép số thứ tự và nội dung
+            // Format steps: Ghép số thứ tự + nội dung nếu cần
             steps: (() => {
                 const formattedSteps = [];
                 for (let i = 0; i < food.steps.length; i++) {
@@ -75,43 +96,66 @@ const listFood = async (req, res) => {
 
                     if (/^\d+\.$/.test(currentStep) && nextStep) {
                         formattedSteps.push(`${currentStep} ${nextStep}`);
-                        i++;  // Bỏ qua phần đã ghép
+                        i++; // Bỏ qua bước đã ghép
+                    } else {
+                        formattedSteps.push(currentStep);
                     }
                 }
                 return formattedSteps;
-            })()
+            })(),
         }));
 
-        res.json({ success: true, data: formattedFoods });
+        res.json({
+            success: true,
+            currentPage: page,
+            totalPages: Math.ceil(totalItems / limit),
+            totalItems,
+            data: formattedFoods,
+        });
     } catch (error) {
         console.error("Error fetching food recipes:", error.message);
         res.status(500).json({ success: false, message: "Error fetching food recipes" });
     }
 };
 
+
+
 const searchFood = async (req, res) => {
     try {
-        const { name } = req.query;
+        let { name, page = 1, limit = 10 } = req.query;
 
         if (!name) {
             return res.status(400).json({ success: false, message: "Please provide a search term" });
         }
 
-        // Tìm kiếm không phân biệt chữ hoa chữ thường (sử dụng regex)
-        const foods = await foodModel.find({
+        // Chuyển đổi sang số nguyên và đảm bảo giá trị hợp lệ
+        page = Math.max(parseInt(page), 1);
+        limit = Math.max(parseInt(limit), 1);
+
+        // Đếm tổng số món ăn phù hợp
+        const total = await foodModel.countDocuments({
             name: { $regex: name, $options: "i" } // "i" giúp tìm kiếm không phân biệt chữ hoa/thường
         });
 
-        if (foods.length === 0) {
-            return res.status(404).json({ success: false, message: "No recipes found" });
-        }
+        const foods = await foodModel
+            .find({ name: { $regex: name, $options: "i" } })
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .select("name description image category calories cookingTime"); // Lấy các trường quan trọng
 
-        res.json({ success: true, data: foods });
+        res.json({
+            success: true,
+            currentPage: page,
+            totalPages: Math.ceil(total / limit),
+            totalItems: total,
+            data: foods,
+        });
     } catch (error) {
         console.error("Error searching food:", error);
         res.status(500).json({ success: false, message: "Error searching food recipe" });
     }
 };
+
 
 
 
@@ -168,6 +212,7 @@ const getFoodDetail = async (req, res) => {
 
 // Remove food recipe
 const removeFood = async (req, res) => {
+    const { id } = req.params;
     try {
         const food = await foodModel.findById(req.body.id);
 

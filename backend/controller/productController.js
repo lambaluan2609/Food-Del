@@ -59,14 +59,16 @@ const addProduct = async (req, res) => {
 // Lấy danh sách sản phẩm
 const listProducts = async (req, res) => {
     try {
-        let { page = 1, limit = 10 } = req.query;
+        let { page = 1, limit = 10, category } = req.query;
 
         page = Math.max(parseInt(page), 1);
         limit = Math.max(parseInt(limit), 1);
 
-        const total = await productModel.countDocuments();
+        const filter = category ? { category } : {}; // Nếu có category, lọc theo category
+
+        const total = await productModel.countDocuments(filter); // Đếm tổng số sản phẩm theo filter
         const products = await productModel
-            .find()
+            .find(filter)
             .skip((page - 1) * limit)
             .limit(limit);
 
@@ -90,6 +92,8 @@ const listProducts = async (req, res) => {
         res.status(500).json({ success: false, message: "Error fetching products" });
     }
 };
+
+
 
 
 // 🔥 Lấy chi tiết sản phẩm theo ID có format chuẩn

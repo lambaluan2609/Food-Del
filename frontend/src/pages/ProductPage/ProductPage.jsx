@@ -6,7 +6,6 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const ProductPage = () => {
     const [products, setProducts] = useState([]);
-    const [filteredProducts, setFilteredProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState("All");
 
@@ -15,21 +14,25 @@ const ProductPage = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
 
+    // Fetch danh sách sản phẩm
     useEffect(() => {
         const fetchProducts = async () => {
             setLoading(true);
             try {
-                const response = await fetch(`${API_URL}/api/product/list?page=${currentPage}&limit=10`);
+                // Nếu chọn "All" thì không gửi category
+                const categoryParam = selectedCategory !== "All" ? `&category=${encodeURIComponent(selectedCategory)}` : "";
+                const response = await fetch(`${API_URL}/api/product/list?page=${currentPage}&limit=10${categoryParam}`);
                 const data = await response.json();
 
                 if (response.ok && data.success) {
                     setProducts(data.data);
                     setTotalPages(data.totalPages);
 
-                    // Lấy danh sách danh mục từ dữ liệu sản phẩm
-                    const uniqueCategories = ["All", ...new Set(data.data.map(product => product.category))];
-                    setCategories(uniqueCategories);
-                    setFilteredProducts(data.data);
+                    // Lấy danh mục từ sản phẩm (chỉ lấy khi lần đầu)
+                    if (categories.length === 0) {
+                        const uniqueCategories = ["All", ...new Set(data.data.map(product => product.category))];
+                        setCategories(uniqueCategories);
+                    }
                 } else {
                     throw new Error(data.message || "Không thể lấy danh sách sản phẩm");
                 }
@@ -40,16 +43,13 @@ const ProductPage = () => {
         };
 
         fetchProducts();
-    }, [currentPage]);
+    }, [currentPage, selectedCategory]); // Khi category thay đổi, gọi API mới
 
-    // Cập nhật danh sách sản phẩm khi chọn danh mục
-    useEffect(() => {
-        if (selectedCategory === "All") {
-            setFilteredProducts(products);
-        } else {
-            setFilteredProducts(products.filter(product => product.category === selectedCategory));
-        }
-    }, [selectedCategory, products]);
+    // Khi chọn danh mục, reset về trang 1
+    const handleCategoryChange = (e) => {
+        setSelectedCategory(e.target.value);
+        setCurrentPage(1); // Reset về trang đầu
+    };
 
     return (
         <div className="product-page">
@@ -58,7 +58,7 @@ const ProductPage = () => {
             {/* Dropdown chọn danh mục */}
             <div className="category-filter">
                 <label>Phân loại:</label>
-                <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+                <select value={selectedCategory} onChange={handleCategoryChange}>
                     {categories.map((category, index) => (
                         <option key={index} value={category}>{category}</option>
                     ))}
@@ -71,10 +71,10 @@ const ProductPage = () => {
             ) : (
                 <>
                     {/* Nếu không có sản phẩm hiển thị */}
-                    {filteredProducts.length === 0 ? (
+                    {products.length === 0 ? (
                         <p className="no-data">Không có sản phẩm nào.</p>
                     ) : (
-                        <ProductDisplay products={filteredProducts} />
+                        <ProductDisplay products={products} />
                     )}
 
                     {/* Phân trang */}

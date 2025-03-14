@@ -14,12 +14,10 @@ const ProductPage = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
 
-    // Fetch danh sách sản phẩm
     useEffect(() => {
         const fetchProducts = async () => {
             setLoading(true);
             try {
-                // Nếu chọn "All" thì không gửi category
                 const categoryParam = selectedCategory !== "All" ? `&category=${encodeURIComponent(selectedCategory)}` : "";
                 const response = await fetch(`${API_URL}/api/product/list?page=${currentPage}&limit=10${categoryParam}`);
                 const data = await response.json();
@@ -28,7 +26,6 @@ const ProductPage = () => {
                     setProducts(data.data);
                     setTotalPages(data.totalPages);
 
-                    // Lấy danh mục từ sản phẩm (chỉ lấy khi lần đầu)
                     if (categories.length === 0) {
                         const uniqueCategories = ["All", ...new Set(data.data.map(product => product.category))];
                         setCategories(uniqueCategories);
@@ -43,17 +40,16 @@ const ProductPage = () => {
         };
 
         fetchProducts();
-    }, [currentPage, selectedCategory]); // Khi category thay đổi, gọi API mới
+    }, [currentPage, selectedCategory]);
 
-    // Khi chọn danh mục, reset về trang 1
     const handleCategoryChange = (e) => {
         setSelectedCategory(e.target.value);
-        setCurrentPage(1); // Reset về trang đầu
+        setCurrentPage(1);
     };
 
     return (
         <div className="product-page">
-            <h2>Danh Sách Sản Phẩm</h2>
+            <h2>🛒 Danh Sách Sản Phẩm</h2>
 
             {/* Dropdown chọn danh mục */}
             <div className="category-filter">
@@ -70,7 +66,6 @@ const ProductPage = () => {
                 <p className="loading">Đang tải sản phẩm...</p>
             ) : (
                 <>
-                    {/* Nếu không có sản phẩm hiển thị */}
                     {products.length === 0 ? (
                         <p className="no-data">Không có sản phẩm nào.</p>
                     ) : (
@@ -83,7 +78,7 @@ const ProductPage = () => {
                             disabled={currentPage === 1}
                             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                         >
-                            Trước
+                            ⬅ Trước
                         </button>
 
                         <span>Trang {currentPage} / {totalPages}</span>
@@ -92,7 +87,7 @@ const ProductPage = () => {
                             disabled={currentPage === totalPages}
                             onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                         >
-                            Sau
+                            Sau ➡
                         </button>
                     </div>
                 </>

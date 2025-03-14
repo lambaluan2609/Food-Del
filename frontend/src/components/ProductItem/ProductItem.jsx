@@ -56,15 +56,14 @@ const ProductItem = ({ id, name, price, originalPrice, description, image }) => 
 
             <div className="product-item-info">
                 <p className="product-item-name">{name}</p>
-                {/* <p className="product-item-brand">{brand}</p> */}
                 <p className="product-item-desc">
-                    {description && description.length > 80 ? description.slice(0, 80) + "..." : description}
+                    {description.length > 80 ? description.slice(0, 80) + "..." : description}
                 </p>
 
                 <div className="product-item-prices">
-                    <span className="sale-price">{price.toLocaleString()} ₫</span>
-                    {originalPrice && originalPrice > price && (
-                        <span className="original-price">{originalPrice.toLocaleString()} ₫</span>
+                    <span className="sale-price">{price} ₫</span>
+                    {originalPrice && (
+                        <span className="original-price">{originalPrice} ₫</span>
                     )}
                 </div>
             </div>

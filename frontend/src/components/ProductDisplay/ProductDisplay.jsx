@@ -13,11 +13,13 @@ const ProductDisplay = ({ products }) => {
                             key={index}
                             id={item._id}
                             name={item.name}
-                            price={item.price || 0}
-                            originalPrice={item.originalPrice || null}
-                            description={Array.isArray(item.description) ? item.description.join(" ") : item.description}
-                            image={item.image}
-                            brand={item.brand || ""}
+                            price={item.price ? item.price.toLocaleString() : "Liên hệ"}
+                            originalPrice={item.originalPrice ? item.originalPrice.toLocaleString() : null}
+                            description={item.description ?
+                                (Array.isArray(item.description) ? item.description.join(" ") : item.description)
+                                : "Không có mô tả"}
+                            image={item.image || "/default-product.png"}
+                            brand={item.brand || "No Brand"}
                         />
                     ))
                 ) : (

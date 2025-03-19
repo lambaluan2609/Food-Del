@@ -6,7 +6,7 @@ import { StoreContext } from '../../context/StoreContext';
 
 const Navbar = ({ setShowLogin }) => {
     const [menu, setMenu] = useState("home");
-    const { getTotalCartAmount, token, setToken } = useContext(StoreContext);
+    const { cartAmount, token, setToken } = useContext(StoreContext);
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
@@ -117,7 +117,7 @@ const Navbar = ({ setShowLogin }) => {
 
                 <div className='navbar-cart'>
                     <Link to='/cart'><img src={assets.basket_icon} alt='Cart' /></Link>
-                    {getTotalCartAmount() > 0 && <div className='dot'></div>}
+                    {cartAmount > 0 && <div className='dot'></div>}
                 </div>
 
                 {!token ? (

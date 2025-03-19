@@ -1,24 +1,33 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import './MyOrders.css'
 import { StoreContext } from '../../context/StoreContext'
 import axios from 'axios';
 import assets from '../../assets/assets';
+
 const MyOrders = () => {
 
   const { url, token } = useContext(StoreContext);
   const [data, setData] = useState([])
+  const [searchParams] = useSearchParams();
+  const orderId = searchParams.get('order_id')
 
   const fetchOrders = async () => {
-    const response = await axios.post(url + "/api/order/userorders", {}, { headers: { token } });
+    const response = await axios.get(url + "/api/order/" + orderId, {}, { headers: { token } });
+    console.log(response.data)
     setData(response.data.data.reverse())
 
   }
 
+  // useEffect(() => {
+  //   if (token) {
+  //     fetchOrders();
+  //   }
+  // }, [token])
+
   useEffect(() => {
-    if (token) {
-      fetchOrders();
-    }
-  }, [token])
+    fetchOrders();
+  }, [])
 
 
   return (
@@ -29,13 +38,9 @@ const MyOrders = () => {
           return (
             <div key={index} className='my-orders-order'>
               <img src={assets.parcel_icon} alt="" />
-              <p>{order.items.map((item, index) => {
-                if (index === order.items.length - 1) {
-                  return item.name + " x " + item.quantity
-                }
-                else {
-                  return item.name + " x " + item.quantity + ", "
-                }
+              <p>{order.items.map((item) => {
+                const product = order.products.find(prod => prod._id === item._id);
+                return (<div><span>{product.name + " x " + item.quantity}</span> </div> )
               })}</p>
               <p>${order.amount}.00</p>
               <p>Items: {order.items.length}</p>

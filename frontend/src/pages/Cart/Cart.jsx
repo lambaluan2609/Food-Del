@@ -1,10 +1,10 @@
-import React, { useContext } from 'react'
+import React, {useContext} from 'react'
 import './Cart.css'
 import { StoreContext } from '../../context/StoreContext'
 import { useNavigate } from 'react-router-dom'
 const Cart = () => {
 
-  const { cartItems, food_list, removeFromCart, getTotalCartAmount } = useContext(StoreContext)
+  const { cartItems, productList, removeFromCart, cartAmount, deliveryFee } = useContext(StoreContext)
 
   const navigate = useNavigate();
 
@@ -21,7 +21,7 @@ const Cart = () => {
         </div>
         <br />
         <hr />
-        {food_list.map((item, index) => {
+        {productList.map((item, index) => {
           if (cartItems[item._id] > 0) {
             return (
               <div key={index}>
@@ -45,16 +45,16 @@ const Cart = () => {
           <div>
             <div className="cart-total-details">
               <p>Subtotal</p>
-              <p>{getTotalCartAmount()}</p>
+              <p>{cartAmount} ₫</p>
             </div>
             <div className="cart-total-details">
               <p>Delivery Fee</p>
-              <p>${getTotalCartAmount() === 0 ? 0 : 2}</p>
+              <p>{deliveryFee} ₫</p>
             </div>
             <hr />
             <div className="cart-total-details">
               <b>Total</b>
-              <b>{getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + 2}</b>
+              <b>{cartAmount + deliveryFee}</b>
             </div>
           </div>
           <button onClick={() => navigate("/order")}>TIẾN HÀNH THANH TOÁN</button>

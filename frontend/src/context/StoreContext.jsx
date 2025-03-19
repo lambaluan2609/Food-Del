@@ -5,9 +5,12 @@ export const StoreContext = createContext(null)
 const StoreContextProvider = (props) => {
 
     const [cartItems, setCartItems] = useState({});
+    const [cartAmount, setCartAmount] = useState(0)
+    const [deliveryFee, setDeliveryFee] = useState(0);
     const url = import.meta.env.VITE_API_URL;
     const [token, setToken] = useState("")
-    const [food_list, setFoodList] = useState([[]])
+    const [foodList, setFoodList] = useState([[]]);
+    const [productList, setProductList] = useState([[]])
 
     const addToCart = async (itemId) => {
         if (!cartItems[itemId]) {
@@ -29,12 +32,11 @@ const StoreContextProvider = (props) => {
         }
     }
 
-    const getTotalCartAmount = () => {
+    const getCartAmount = () => {
         let totalAmount = 0
         for (const item in cartItems) {
-            
                 if (cartItems[item] > 0) {
-                    let itemInfo = food_list.find((product) => product._id === item)
+                    let itemInfo = productList.find((product) => product._id === item)
                     totalAmount += itemInfo.price * cartItems[item]
                 }
         }
@@ -45,6 +47,11 @@ const StoreContextProvider = (props) => {
     const fetchFoodList = async () => {
        const response = await axios.get(url+"/api/food/list")
        setFoodList(response.data.data)
+    }
+
+    const fetchProductList = async () => {
+        const response = await axios.get(url+"/api/product/list")
+        setProductList(response.data.data)
     }
 
     const loadCartData = async (token) => {
@@ -59,25 +66,39 @@ const StoreContextProvider = (props) => {
         console.error("Error fetching cart data: ", error);
     }
 };
+    useEffect(() => {
+        if(Object.keys(cartItems).length) {
+            setCartAmount(getCartAmount());
+            localStorage.setItem("cartItems", JSON.stringify(cartItems));
+            if(cartAmount > 0 && cartAmount < 100000) setDeliveryFee(30000)
+            else if (cartAmount > 0 && cartAmount < 500000) setDeliveryFee(15000)
+        }
+    }, [cartAmount, cartItems])
 
     useEffect(() => {
         async function loadData() {
             await fetchFoodList();
+            await fetchProductList();
             if (localStorage.getItem("token")) {
-            setToken(localStorage.getItem("token"))
-            await loadCartData(localStorage.getItem("token"))
-        }
+                setToken(localStorage.getItem("token"))
+                await loadCartData(localStorage.getItem("token"))
+            }
+            if(localStorage.getItem("cartItems")) {
+                setCartItems(JSON.parse(localStorage.getItem("cartItems")))
+            }
         }
         loadData();
     }, [])
 
     const contextValue = {
-        food_list,
+        foodList,
+        productList,
         cartItems,
+        deliveryFee,
         setCartItems,
         addToCart,
         removeFromCart,
-        getTotalCartAmount,
+        cartAmount,
         url,
         token,
         setToken

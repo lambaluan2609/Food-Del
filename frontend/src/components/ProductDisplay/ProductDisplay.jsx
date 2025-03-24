@@ -19,7 +19,7 @@ const ProductDisplay = ({ products }) => {
                                 (Array.isArray(item.description) ? item.description.join(" ") : item.description)
                                 : "Không có mô tả"}
                             image={item.image || "/default-product.png"}
-                            brand={item.brand || "No Brand"}
+
                         />
                     ))
                 ) : (

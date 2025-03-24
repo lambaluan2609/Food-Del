@@ -1,9 +1,11 @@
 import express from 'express'
-import {createOrder, getDetailOrder} from '../controller/orderController.js'
+import { createOrder, getDetailOrder, listOrder, updateOrderStatus } from '../controller/orderController.js'
 
 const orderRoute = express.Router()
 
 orderRoute.post('/place', createOrder)
 orderRoute.get('/:id', getDetailOrder)
+orderRoute.get('/', listOrder)
+orderRoute.put('/:id', updateOrderStatus)
 
 export default orderRoute

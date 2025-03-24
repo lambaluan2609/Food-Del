@@ -1,0 +1,20 @@
+.order-detail {
+    padding: 20px;
+}
+
+.order-info,
+.order-items {
+    margin-bottom: 20px;
+}
+
+.order-info p,
+.item p {
+    margin: 5px 0;
+}
+
+.item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}

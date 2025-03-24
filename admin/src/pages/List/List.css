@@ -50,3 +50,19 @@
     font-style: italic;
     margin: 10px 0;
 }
+
+.edit-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.list-table-format div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}

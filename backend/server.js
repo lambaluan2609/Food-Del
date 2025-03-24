@@ -4,8 +4,8 @@ import { connectDB } from "./config/db.js"
 import foodRouter from "./routes/foodRoute.js"
 import userRouter from "./routes/userRoute.js"
 import productRouter from "./routes/productRoute.js"
-import 'dotenv/config'
 import orderRoute from "./routes/orderRoute.js";
+import 'dotenv/config'
 
 //app config
 const app = express()

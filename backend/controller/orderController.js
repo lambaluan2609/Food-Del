@@ -2,7 +2,7 @@ import orderModel from "../model/orderModel.js";
 import productModel from "../model/productModel.js";
 
 const createOrder = async (req, res) => {
-    const {orderInfo, items, deliveryFee, cartAmount} = req.body;
+    const { orderInfo, items, deliveryFee, cartAmount } = req.body;
     try {
         const newOrder = new orderModel({
             firstName: orderInfo.firstName,
@@ -26,17 +26,17 @@ const createOrder = async (req, res) => {
         })
     } catch (error) {
         console.log(error);
-        res.status(500).json({success: false, message: "Error"})
+        res.status(500).json({ success: false, message: "Error" })
     }
 }
 
 const getDetailOrder = async (req, res) => {
-    const {id} = req.params
+    const { id } = req.params
     try {
         const order = await orderModel.findById(id)
-        if (!order) return res.status(404).json({success: false, message: "Order not found"})
+        if (!order) return res.status(404).json({ success: false, message: "Order not found" })
         const listProductId = order.items.map(item => item._id)
-        const products = await productModel.find({_id: {$in: listProductId}});
+        const products = await productModel.find({ _id: { $in: listProductId } });
         return res.status(200).json({
             success: true,
             data: [
@@ -48,13 +48,90 @@ const getDetailOrder = async (req, res) => {
                     items: order.items,
                     products: products,
                     status: order.status,
+                    createdAt: order.createdAt,
+                    customer: {
+                        firstName: order.firstName,
+                        lastName: order.lastName,
+                        email: order.email,
+                        phone: order.phone,
+                        address: `${order.street}, ${order.city}, ${order.state}`,
+                    },
                 }
             ]
         })
     } catch (error) {
         console.log(error);
-        res.status(500).json({success: false, message: "Error"})
+        res.status(500).json({ success: false, message: "Error" })
     }
 }
 
-export {createOrder, getDetailOrder}
+const listOrder = async (req, res) => {
+    try {
+        let { page = 1, limit = 10 } = req.query;
+        page = Math.max(parseInt(page), 1);
+        limit = Math.max(parseInt(limit), 1);
+
+        const totalItems = await orderModel.countDocuments();
+        const orders = await orderModel
+            .find({})
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .select("firstName lastName email phone cartTotal status createdAt");
+
+        if (!orders.length && totalItems === 0) {
+            return res.json({
+                success: true,
+                currentPage: page,
+                totalPages: 0,
+                totalItems: 0,
+                data: [],
+            });
+        }
+
+        res.json({
+            success: true,
+            currentPage: page,
+            totalPages: Math.ceil(totalItems / limit),
+            totalItems,
+            data: orders,
+        });
+    } catch (error) {
+        console.error("Error fetching orders:", error.message);
+        res.status(500).json({ success: false, message: "Error fetching orders" });
+    }
+};
+// Cập nhật trạng thái đơn hàng
+const updateOrderStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        if (!['IN_PROGRESS', 'SHIPPED', 'DELIVERED', 'CANCELLED'].includes(status)) {
+            return res.status(400).json({ success: false, message: "Invalid status" });
+        }
+
+        const order = await orderModel.findByIdAndUpdate(
+            id,
+            { status },
+            { new: true }
+        );
+
+        if (!order) {
+            return res.status(404).json({ success: false, message: "Order not found" });
+        }
+
+        res.json({
+            success: true,
+            message: "Order status updated",
+            data: {
+                ...order._doc,
+                createdAt: order.createdAt, // Đảm bảo trả về createdAt
+            },
+        });
+    } catch (error) {
+        console.error("Error updating order:", error);
+        res.status(500).json({ success: false, message: "Error updating order" });
+    }
+};
+
+export { createOrder, getDetailOrder, listOrder, updateOrderStatus };

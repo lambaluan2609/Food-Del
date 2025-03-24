@@ -2,13 +2,15 @@ import React, { useEffect, useState } from "react";
 import "./List.css";
 import axios from "axios";
 import { toast } from "react-toastify";
+import EditPopup from "../EditPopup/EditPopup"; // Import Popup
 
 const List = ({ url }) => {
   const [list, setList] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const limit = 10; // 🔥 Giới hạn số món ăn hiển thị trên mỗi trang
+  const [editItem, setEditItem] = useState(null); // State để lưu item cần chỉnh sửa
+  const limit = 10;
 
   const fetchList = async () => {
     try {
@@ -29,14 +31,12 @@ const List = ({ url }) => {
   const removeFood = async (foodId) => {
     try {
       if (!window.confirm("Are you sure you want to remove this food?")) return;
-
       const response = await axios.delete(`${url}/api/food/remove/${foodId}`, {
         data: { id: foodId },
       });
-
       if (response.data.success) {
         toast.success(response.data.message);
-        fetchList(); // 🔥 Tự động làm mới danh sách sau khi xóa
+        fetchList();
       } else {
         toast.error("Error removing food");
       }
@@ -46,6 +46,11 @@ const List = ({ url }) => {
     }
   };
 
+  const handleUpdate = (updatedItem) => {
+    setList((prevList) => prevList.map((item) => (item._id === updatedItem._id ? updatedItem : item)));
+    setEditItem(null);
+  };
+
   useEffect(() => {
     fetchList();
   }, [page]);
@@ -53,46 +58,49 @@ const List = ({ url }) => {
   return (
     <div className="list add flex-col">
       <p>Tất cả công thức</p>
-
       <div className="list-table">
-        {/* 🏆 Thêm cột STT */}
         <div className="list-table-format title">
-          <b>STT</b> {/* ✅ Thêm tiêu đề số thứ tự */}
+          <b>STT</b>
           <b>Hình ảnh</b>
           <b>Tên công thức</b>
           <b>Phân loại</b>
           <b>Độ khó</b>
           <b>Action</b>
         </div>
-
         {list.length === 0 ? (
           <p className="no-data">No food recipes found</p>
         ) : (
           list.map((item, index) => (
-            <div key={index} className="list-table-format">
-              <p>{(page - 1) * limit + index + 1}</p> {/* ✅ Tính toán STT */}
+            <div key={item._id} className="list-table-format">
+              <p>{(page - 1) * limit + index + 1}</p>
               <img src={item.image} alt={item.name} />
               <p>{item.name}</p>
               <p>{item.category}</p>
               <p>{item.difficulty}</p>
-              <p onClick={() => removeFood(item._id)} className="cursor">
-                X
-              </p>
+              <div>
+                <button onClick={() => setEditItem(item)} className="edit-btn">Edit</button>
+                <p onClick={() => removeFood(item._id)} className="cursor">X</p>
+              </div>
             </div>
           ))
         )}
       </div>
       <p>{`Tổng số công thức: ${totalItems}`}</p>
-      {/* 🔥 Pagination Controls */}
       <div className="pagination">
-        <button disabled={page === 1} onClick={() => setPage(page - 1)}>
-          Previous
-        </button>
+        <button disabled={page === 1} onClick={() => setPage(page - 1)}>Previous</button>
         <span>Page {page} of {totalPages}</span>
-        <button disabled={page === totalPages} onClick={() => setPage(page + 1)}>
-          Next
-        </button>
+        <button disabled={page === totalPages} onClick={() => setPage(page + 1)}>Next</button>
       </div>
+
+      {editItem && (
+        <EditPopup
+          url={url}
+          type="food"
+          item={editItem}
+          onClose={() => setEditItem(null)}
+          onUpdate={handleUpdate}
+        />
+      )}
     </div>
   );
 };

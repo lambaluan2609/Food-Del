@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import "./Cart.css";
 import { StoreContext } from "../../context/StoreContext";
 import { useNavigate } from "react-router-dom";
-import logo from "../../assets/logo.png"; // Import logo trực tiếp
+import logo from "../../assets/logo.png";
 
 const Cart = () => {
   const { cartItems, productList, removeFromCart, cartAmount, deliveryFee } = useContext(StoreContext);
@@ -25,6 +25,21 @@ const Cart = () => {
         return "Đã hủy";
       default:
         return status;
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "IN_PROGRESS":
+        return "#ff9800";
+      case "SHIPPED":
+        return "#2196f3";
+      case "DELIVERED":
+        return "#4caf50";
+      case "CANCELLED":
+        return "#f44336";
+      default:
+        return "#000000";
     }
   };
 
@@ -87,11 +102,17 @@ const Cart = () => {
             .customer-info, .order-info { width: 45%; }
             .customer-info h3, .order-info h3 { margin-bottom: 10px; font-size: 16px; }
             .customer-info p, .order-info p { margin: 5px 0; }
+            .status-highlight { font-weight: bold; }
             table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
             th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
             th { background-color: #f5f5f5; font-weight: bold; }
             .total-section { text-align: right; }
             .total-section p { margin: 5px 0; font-weight: bold; }
+            .signature-section { display: flex; justify-content: space-between; margin-top: 40px; }
+            .signature-box { width: 45%; text-align: center; }
+            .signature-box p { margin: 5px 0; }
+            .signature-line { border-top: 1px solid #000; margin-top: 20px; }
+            .signature-check { font-size: 20px; color: #4caf50; margin: 5px 0; }
             @media print { .no-print { display: none; } }
           </style>
         </head>
@@ -128,7 +149,7 @@ const Cart = () => {
         })
         : "N/A"
       }</p>
-                <p><b>Trạng thái:</b> ${getStatusLabel(order.status)}</p>
+                <p><b>Trạng thái:</b> <span class="status-highlight" style="color: ${getStatusColor(order.status)}">${getStatusLabel(order.status)}</span></p>
               </div>
             </div>
             <h3>Danh sách sản phẩm</h3>
@@ -163,6 +184,25 @@ const Cart = () => {
               <p>Tổng tiền giỏ hàng: ${order.cartAmount.toLocaleString()} ₫</p>
               <p>Phí giao hàng: ${order.deliveryFee.toLocaleString()} ₫</p>
               <p><b>Tổng cộng: ${order.cartTotal.toLocaleString()} ₫</b></p>
+            </div>
+            <div class="signature-section">
+              <div class="signature-box">
+                <p>Chữ ký người bán</p>
+                <p class="signature-check">✔</p>
+                <p>(Đã ký điện tử bởi Cook&Carry)</p>
+                <div class="signature-line"></div>
+              </div>
+              <div class="signature-box">
+                <p>Chữ ký người nhận</p>
+                ${order.status === "DELIVERED"
+        ? `
+                      <p class="signature-check">✔</p>
+                      <p>(${order.customer.firstName} ${order.customer.lastName})</p>
+                      <div class="signature-line"></div>
+                    `
+        : `<p>(Chưa ký - Đơn hàng chưa được giao)</p>`
+      }
+              </div>
             </div>
           </div>
         </body>
@@ -219,7 +259,7 @@ const Cart = () => {
             <hr />
             <div className="cart-total-details">
               <b>Total</b>
-              <b>{cartAmount + deliveryFee}</b>
+              <b>{cartAmount + deliveryFee} ₫</b>
             </div>
           </div>
           <button onClick={() => navigate("/order")}>TIẾN HÀNH THANH TOÁN</button>
@@ -242,7 +282,6 @@ const Cart = () => {
         </div>
       </div>
 
-      {/* Popup hiển thị chi tiết đơn hàng */}
       {showPopup && orderDetails && (
         <div className="order-popup">
           <div className="order-popup-content">
@@ -266,7 +305,7 @@ const Cart = () => {
                   })
                   : "N/A"}
                 </p>
-                <p><b>Trạng thái:</b> {getStatusLabel(orderDetails.status)}</p>
+                <p><b>Trạng thái:</b> <span className="status-highlight" style={{ color: getStatusColor(orderDetails.status) }}>{getStatusLabel(orderDetails.status)}</span></p>
               </div>
             </div>
             <h4>Danh sách sản phẩm</h4>

@@ -30,7 +30,6 @@
 
 .my-orders-order p b {
     font-weight: 500;
-    color: #454545;
 }
 
 .order-actions {
@@ -49,18 +48,15 @@
 
 .order-actions button:nth-child(1) {
     background: #ffe1e1;
-    /* Màu mặc định cho Xem chi tiết */
     color: #454545;
 }
 
 .order-actions button:nth-child(2) {
     background: #28a745;
-    /* Xanh lá cho Sao chép */
 }
 
 .order-actions button:nth-child(3) {
     background: #ff4d4d;
-    /* Đỏ cho In */
 }
 
 .order-popup {
@@ -113,6 +109,10 @@
     margin: 5px 0;
 }
 
+.status-highlight {
+    font-weight: bold;
+}
+
 .order-items-table {
     width: 100%;
     border-collapse: collapse;
@@ -156,17 +156,14 @@
 
 .copy-btn {
     background: #28a745;
-    /* Xanh lá */
 }
 
 .print-btn {
     background: #ff4d4d;
-    /* Đỏ */
 }
 
 .close-popup {
-    background: #000000;
-    /* Xanh dương */
+    background: #007bff;
 }
 
 @media (max-width: 900px) {

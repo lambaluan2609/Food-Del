@@ -100,7 +100,7 @@ const PlaceOrder = () => {
             <hr />
             <div className="cart-total-details">
               <b>Total</b>
-              <b>{cartAmount === 0 ? 0 : cartAmount + 2}</b>
+              <b>{cartAmount + deliveryFee} ₫</b>
             </div>
           </div>
           <button type='submit' >HOÀN TẤT THANH TOÁN</button>

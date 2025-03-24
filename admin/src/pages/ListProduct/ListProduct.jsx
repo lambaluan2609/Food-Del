@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
-import "./ListProduct.css";
 import axios from "axios";
 import { toast } from "react-toastify";
-import EditPopup from "../EditPopup/EditPopup"; // Import Popup
+import EditPopup from "../EditPopup/EditPopup";
+import "./ListProduct.css";
 
 const ListProduct = ({ url }) => {
     const [list, setList] = useState([]);
@@ -10,7 +10,7 @@ const ListProduct = ({ url }) => {
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const [editItem, setEditItem] = useState(null); // State để lưu item cần chỉnh sửa
+    const [editItem, setEditItem] = useState(null);
     const limit = 10;
 
     const fetchList = useCallback(async () => {
@@ -22,28 +22,28 @@ const ListProduct = ({ url }) => {
                 setTotalPages(response.data.totalPages);
                 setTotalItems(response.data.totalItems);
             } else {
-                toast.error("Error fetching product list");
+                toast.error("Lỗi khi tải danh sách sản phẩm");
             }
         } catch (error) {
             console.error(error);
-            toast.error("Failed to load product list");
+            toast.error("Không thể tải danh sách sản phẩm");
         }
         setLoading(false);
     }, [url, page]);
 
     const removeProduct = async (productId) => {
-        if (!window.confirm("Are you sure you want to remove this product?")) return;
+        if (!window.confirm("Bạn có chắc muốn xóa sản phẩm này không?")) return;
         try {
             const response = await axios.delete(`${url}/api/product/remove/${productId}`);
             if (response.data.success) {
                 toast.success(response.data.message);
                 fetchList();
             } else {
-                toast.error("Error removing product");
+                toast.error("Lỗi khi xóa sản phẩm");
             }
         } catch (error) {
             console.error(error);
-            toast.error("Failed to remove product");
+            toast.error("Không thể xóa sản phẩm");
         }
     };
 
@@ -57,44 +57,79 @@ const ListProduct = ({ url }) => {
     }, [fetchList]);
 
     return (
-        <div className="list add flex-col">
-            <p>Tất cả sản phẩm</p>
-            <p>{`Total Products: ${totalItems}`}</p>
-            {loading && <p>Loading products...</p>}
-            <div className="list-table">
-                <div className="list-table-format title">
-                    <b>STT</b>
-                    <b>Hình ảnh</b>
-                    <b>Tên sản phẩm</b>
-                    <b>Phân loại</b>
-                    <b>Giá</b>
-                    <b>Tồn kho</b>
-                    <b>Action</b>
-                </div>
-                {list.length > 0 ? (
-                    list.map((item, index) => (
-                        <div key={item._id} className="list-table-format">
-                            <p>{(page - 1) * limit + index + 1}</p>
-                            <img src={item.image} alt={item.name} />
-                            <p>{item.name}</p>
-                            <p>{item.category}</p>
-                            <p>{item.price.toLocaleString()} VND</p>
-                            <p>{item.stock}</p>
-                            <div>
-                                <button onClick={() => setEditItem(item)} className="edit-btn">Edit</button>
-                                <p onClick={() => removeProduct(item._id)} className="cursor">X</p>
-                            </div>
-                        </div>
-                    ))
-                ) : (
-                    <p>No products found</p>
-                )}
-            </div>
-            <div className="pagination">
-                <button disabled={page <= 1} onClick={() => setPage((prev) => prev - 1)}>Prev</button>
-                <span>Page {page} of {totalPages}</span>
-                <button disabled={page >= totalPages} onClick={() => setPage((prev) => prev + 1)}>Next</button>
-            </div>
+        <div className="list-product">
+            <h2 className="list-title">Tất cả sản phẩm</h2>
+            <p className="total-items">{`Tổng số sản phẩm: ${totalItems}`}</p>
+
+            {loading ? (
+                <p className="loading">Đang tải sản phẩm...</p>
+            ) : (
+                <>
+                    <table className="product-table">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Hình ảnh</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Phân loại</th>
+                                <th>Giá</th>
+                                <th>Tồn kho</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {list.length > 0 ? (
+                                list.map((item, index) => (
+                                    <tr key={item._id}>
+                                        <td>{(page - 1) * limit + index + 1}</td>
+                                        <td>
+                                            <img src={item.image} alt={item.name} className="product-image" />
+                                        </td>
+                                        <td>{item.name}</td>
+                                        <td>{item.category}</td>
+                                        <td>{item.price.toLocaleString()} VND</td>
+                                        <td>{item.stock}</td>
+                                        <td>
+                                            <button onClick={() => setEditItem(item)} className="edit-btn">
+                                                Edit
+                                            </button>
+                                            <button onClick={() => removeProduct(item._id)} className="remove-btn">
+                                                X
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="7" className="no-data">
+                                        Không tìm thấy sản phẩm nào
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+
+                    <div className="pagination">
+                        <button
+                            className="pagination-btn"
+                            disabled={page <= 1}
+                            onClick={() => setPage((prev) => prev - 1)}
+                        >
+                            Trang trước
+                        </button>
+                        <span className="pagination-info">
+                            Trang {page} / {totalPages}
+                        </span>
+                        <button
+                            className="pagination-btn"
+                            disabled={page >= totalPages}
+                            onClick={() => setPage((prev) => prev + 1)}
+                        >
+                            Trang sau
+                        </button>
+                    </div>
+                </>
+            )}
 
             {editItem && (
                 <EditPopup

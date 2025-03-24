@@ -65,7 +65,7 @@
 }
 
 .cart-promocode-input button {
-    background: #000000;
+    background: #007bff;
     color: white;
     padding: 5px 10px;
     border: none;
@@ -136,6 +136,10 @@
     margin: 5px 0;
 }
 
+.status-highlight {
+    font-weight: bold;
+}
+
 .order-items-table {
     width: 100%;
     border-collapse: collapse;
@@ -179,15 +183,12 @@
 
 .copy-btn {
     background: #28a745;
-    /* Xanh lá */
 }
 
 .print-btn {
     background: #ff4d4d;
-    /* Đỏ */
 }
 
 .close-popup {
-    background: #000000;
-    /* Xanh dương */
+    background: #007bff;
 }

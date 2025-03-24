@@ -1,40 +1,238 @@
-.place-order{
+.place-order-container {
+    max-width: 1400px;
+    /* Tăng chiều rộng tối đa để không bị nhỏ */
+    margin: 0 auto;
+    padding: 40px 20px;
+    /* Tăng padding trên để thoáng hơn */
+    background-color: #f5f5f5;
+    min-height: 100vh;
     display: flex;
-    align-items: start;
+    justify-content: center;
+    align-items: flex-start;
+    /* Đưa nội dung lên trên để không bị co cụm giữa màn hình */
+}
+
+.place-order {
+    display: flex;
+    gap: 40px;
+    /* Tăng khoảng cách giữa hai cột */
+    background: #fff;
+    padding: 40px;
+    /* Tăng padding để rộng rãi hơn */
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 1200px;
+    /* Tăng chiều rộng tối đa của form */
+}
+
+.place-order-left {
+    flex: 3;
+    /* Tăng tỷ lệ để phần nhập liệu rộng hơn */
+}
+
+.title {
+    font-size: 28px;
+    /* Tăng kích thước tiêu đề */
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 30px;
+    /* Tăng khoảng cách dưới */
+}
+
+.form-group {
+    margin-bottom: 25px;
+    /* Tăng khoảng cách giữa các nhóm input */
+}
+
+.multi-fields {
+    display: flex;
+    gap: 20px;
+    /* Tăng khoảng cách giữa các input trong multi-fields */
+}
+
+.input-wrapper {
+    position: relative;
+    flex: 1;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 15px 18px;
+    /* Tăng padding để input lớn hơn */
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 18px;
+    /* Tăng kích thước chữ */
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.input-wrapper input:focus {
+    border-color: #ff4d4d;
+}
+
+.input-wrapper label {
+    position: absolute;
+    top: 50%;
+    left: 18px;
+    transform: translateY(-50%);
+    font-size: 18px;
+    /* Tăng kích thước nhãn */
+    color: #888;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.input-wrapper input:focus+label,
+.input-wrapper input:not(:placeholder-shown)+label {
+    top: 0;
+    font-size: 14px;
+    /* Nhãn nhỏ lại khi nổi lên */
+    color: #ff4d4d;
+    background: #fff;
+    padding: 0 6px;
+    transform: translateY(-50%);
+}
+
+.place-order-right {
+    flex: 2;
+    /* Tăng tỷ lệ để phần tổng tiền rộng hơn */
+}
+
+.cart-total {
+    background: #fafafa;
+    padding: 30px;
+    /* Tăng padding để rộng rãi hơn */
+    border-radius: 10px;
+}
+
+.cart-total h2 {
+    font-size: 24px;
+    /* Tăng kích thước tiêu đề */
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 25px;
+    /* Tăng khoảng cách dưới */
+}
+
+.cart-total-details {
+    display: flex;
     justify-content: space-between;
-    gap: 50px;
-    margin-top: 100px;
+    padding: 15px 0;
+    /* Tăng padding để thoáng hơn */
+    font-size: 18px;
+    /* Tăng kích thước chữ */
+    color: #555;
 }
 
-.place-order-left{
+.cart-total-details.total {
+    font-weight: bold;
+    color: #333;
+}
+
+.cart-total hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 15px 0;
+    /* Tăng khoảng cách */
+}
+
+.checkout-btn {
     width: 100%;
-    max-width: max(30%,500px);
+    padding: 18px;
+    /* Tăng chiều cao nút */
+    background: linear-gradient(90deg, #ff4d4d, #ff9900);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 20px;
+    /* Tăng kích thước chữ */
+    font-weight: bold;
+    margin-top: 25px;
+    /* Tăng khoảng cách trên */
+    transition: background 0.3s;
 }
 
-.place-order-left .title{
-    font-size: 30px;
-    font-weight: 600;
-    margin-bottom: 50px;
+.checkout-btn:hover {
+    background: linear-gradient(90deg, #e63939, #e68a00);
 }
 
-.place-order-left input{
-    margin-bottom: 15px;
+.back-btn {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #c5c5c5;
-    border-radius: 4px;
-    outline-color: tomato;
+    padding: 15px;
+    /* Tăng chiều cao nút */
+    background: #fff;
+    color: #ff4d4d;
+    border: 2px solid #ff4d4d;
+    /* Tăng độ dày viền */
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    /* Tăng kích thước chữ */
+    margin-top: 15px;
+    transition: all 0.3s;
 }
 
-.place-order-left .multi-fields{
-    display: flex;
-    gap: 10px;
-}
-.place-order-right{
-    width: 100%;
-    max-width: max(40%,500px);
+.back-btn:hover {
+    background: #ff4d4d;
+    color: #fff;
 }
 
-.place-order .cart-total button{
-    margin-top: 30px;
+@media (max-width: 1024px) {
+    .place-order {
+        gap: 30px;
+        padding: 30px;
+        max-width: 900px;
+    }
+
+    .input-wrapper input {
+        padding: 12px 15px;
+        font-size: 16px;
+    }
+
+    .input-wrapper label {
+        font-size: 16px;
+    }
+
+    .cart-total-details {
+        font-size: 16px;
+    }
+
+    .checkout-btn {
+        padding: 15px;
+        font-size: 18px;
+    }
+
+    .back-btn {
+        padding: 12px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .place-order {
+        flex-direction: column;
+        padding: 20px;
+        max-width: 100%;
+    }
+
+    .multi-fields {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .place-order-right {
+        margin-top: 30px;
+    }
+
+    .cart-total {
+        padding: 20px;
+    }
+
+    .title,
+    .cart-total h2 {
+        font-size: 22px;
+    }
 }

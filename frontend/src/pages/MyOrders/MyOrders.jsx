@@ -224,7 +224,7 @@ const MyOrders = () => {
                   );
                 })}
               </p>
-              <p>${order.cartTotal}.00</p>
+              <p>{order.cartTotal} ₫</p>
               <p>Items: {order.items.length}</p>
               <p>
                 <span>●</span> <b style={{ color: getStatusColor(order.status) }}>{getStatusLabel(order.status)}</b>

@@ -107,3 +107,24 @@
     font-size: 14px;
     color: #666;
 }
+
+.export-section {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.export-btn {
+    padding: 8px 16px;
+    background-color: #28a745;
+    /* Màu xanh lá cho nút xuất Excel */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.export-btn:hover {
+    background-color: #218838;
+    /* Màu xanh đậm hơn khi hover */
+}

@@ -17,10 +17,10 @@ const useScrollAnimation = (deps = []) => {
                     observer.unobserve(entry.target)
                 }
             },
-            { 
+            {
                 root: null,
-                rootMargin: '0px 0px -20px 0px', 
-                threshold: 0.01 
+                rootMargin: '0px 0px -20px 0px',
+                threshold: 0.01
             }
         )
 
@@ -72,16 +72,16 @@ const RecipeDetails = () => {
     }, [id]);
 
     useEffect(() => {
-    // Reset scroll về đầu trang khi mount component
-    window.scrollTo(0, 0)
-    
-    // Force re-check vị trí các element sau 100ms
-    const timer = setTimeout(() => {
-        window.dispatchEvent(new Event('scroll'))
-    }, 100)
-    
-    return () => clearTimeout(timer)
-}, [id])
+        // Reset scroll về đầu trang khi mount component
+        window.scrollTo(0, 0)
+
+        // Force re-check vị trí các element sau 100ms
+        const timer = setTimeout(() => {
+            window.dispatchEvent(new Event('scroll'))
+        }, 100)
+
+        return () => clearTimeout(timer)
+    }, [id])
 
     // Animation cho số
     useEffect(() => {
@@ -101,14 +101,14 @@ const RecipeDetails = () => {
             window.requestAnimationFrame(step);
         };
 
-        animateValue(0, recipe.cookingTime, 2000, (value) => 
-            setAnimatedValues(prev => ({...prev, cookingTime: value}))
+        animateValue(0, recipe.cookingTime, 2000, (value) =>
+            setAnimatedValues(prev => ({ ...prev, cookingTime: value }))
         );
-        animateValue(0, recipe.calories, 2000, (value) => 
-            setAnimatedValues(prev => ({...prev, calories: value}))
+        animateValue(0, recipe.calories, 2000, (value) =>
+            setAnimatedValues(prev => ({ ...prev, calories: value }))
         );
-        animateValue(0, recipe.servings, 2000, (value) => 
-            setAnimatedValues(prev => ({...prev, servings: value}))
+        animateValue(0, recipe.servings, 2000, (value) =>
+            setAnimatedValues(prev => ({ ...prev, servings: value }))
         );
     }, [recipe]);
 
@@ -152,8 +152,8 @@ const RecipeDetails = () => {
             </div>
 
             {/* Description Section */}
-            <section 
-                className={`description-section ${isDescVisible ? 'visible' : ''}`} 
+            <section
+                className={`description-section ${isDescVisible ? 'visible' : ''}`}
                 ref={descRef}
             >
                 <h2 className="section-title">Mô tả</h2>
@@ -178,8 +178,8 @@ const RecipeDetails = () => {
                 <div className="info-item">
                     <FaAppleAlt className="info-icon" />
                     <div>
-                        <h3>Lượng calo</h3>
-                        <p>{animatedValues.calories} cal</p>
+                        <h3>Lượng calories</h3>
+                        <p>{animatedValues.calories} kcal</p>
                     </div>
                 </div>
                 <div className="info-item">
@@ -189,11 +189,18 @@ const RecipeDetails = () => {
                         <p>{animatedValues.servings} người</p>
                     </div>
                 </div>
+                <div className="info-item">
+                    <FaUserAlt className="info-icon" />
+                    <div>
+                        <h3>Lượng Calories theo khẩu phần</h3>
+                        <p>{animatedValues.calories / animatedValues.servings} kcal/ người</p>
+                    </div>
+                </div>
             </div>
 
             {/* Ingredients Section */}
-            <section 
-                className={`ingredients-section ${isIngredientsVisible ? 'visible' : ''}`} 
+            <section
+                className={`ingredients-section ${isIngredientsVisible ? 'visible' : ''}`}
                 ref={ingredientsRef}
             >
                 <h2 className="section-title">Nguyên liệu</h2>
@@ -208,8 +215,8 @@ const RecipeDetails = () => {
             </section>
 
             {/* Cooking Steps */}
-            <section 
-                className={`steps-section ${isStepsVisible ? 'visible' : ''}`} 
+            <section
+                className={`steps-section ${isStepsVisible ? 'visible' : ''}`}
                 ref={stepsRef}
             >
                 <h2 className="section-title">Các bước thực hiện</h2>
@@ -225,8 +232,8 @@ const RecipeDetails = () => {
 
             {/* YouTube Video */}
             {recipe.youtubeUrl && (
-                <div 
-                    className={`video-section ${isVideoVisible ? 'visible' : ''}`} 
+                <div
+                    className={`video-section ${isVideoVisible ? 'visible' : ''}`}
                     ref={videoRef}
                 >
                     <h2 className="section-title">Video hướng dẫn</h2>
@@ -241,8 +248,8 @@ const RecipeDetails = () => {
             )}
 
             {/* Author Info */}
-            <div 
-                className={`author-section ${isAuthorVisible ? 'visible' : ''}`} 
+            <div
+                className={`author-section ${isAuthorVisible ? 'visible' : ''}`}
                 ref={authorRef}
             >
                 <p className="author-text">

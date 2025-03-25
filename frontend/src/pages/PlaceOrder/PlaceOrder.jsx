@@ -28,8 +28,15 @@ const PlaceOrder = () => {
   const placeOrder = async (event) => {
     event.preventDefault();
     let orderItems = [];
+    
+    // Kiểm tra productList có tồn tại và có dữ liệu
+    if (!productList || productList.length === 0) {
+        toast.error("Không thể tải danh sách sản phẩm!");
+        return;
+    }
+
     productList.forEach((item) => {
-      if (cartItems[item._id] > 0) {
+      if (cartItems[item._id] > 0 && item.price) {  // Thêm kiểm tra item.price
         orderItems.push({
           _id: item._id,
           quantity: cartItems[item._id],

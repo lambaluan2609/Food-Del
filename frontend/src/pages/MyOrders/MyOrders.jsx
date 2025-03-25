@@ -5,7 +5,7 @@ import { StoreContext } from "../../context/StoreContext";
 import axios from "axios";
 import assets from "../../assets/assets";
 import logo from "../../assets/logo.png";
-
+import { toast } from "react-toastify";
 const MyOrders = () => {
   const { url, token } = useContext(StoreContext);
   const [data, setData] = useState([]);
@@ -76,7 +76,14 @@ const MyOrders = () => {
 
   const copyOrderId = (orderId) => {
     navigator.clipboard.writeText(orderId);
-    alert("Mã đơn hàng đã được sao chép: " + orderId);
+    toast.success(`Mã đơn hàng đã được sao chép: ${orderId}`, {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
   };
 
   const printOrder = (order) => {

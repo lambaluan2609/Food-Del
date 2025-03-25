@@ -11,6 +11,7 @@ const MyOrders = () => {
   const [data, setData] = useState([]);
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get("order_id");
+  // eslint-disable-next-line no-unused-vars
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -165,9 +166,9 @@ const MyOrders = () => {
                       <tr>
                         <td>${index + 1}</td>
                         <td>${product.name}</td>
-                        <td>${product.price.toLocaleString()}</td>
+                        <td>${(product?.price || 0).toLocaleString()}</td>
                         <td>${item.quantity}</td>
-                        <td>${(product.price * item.quantity).toLocaleString()}</td>
+                        <td>${((product?.price || 0) * item.quantity).toLocaleString()}</td>
                       </tr>
                     `;
         })
@@ -285,9 +286,9 @@ const MyOrders = () => {
                     <tr key={index}>
                       <td>{index + 1}</td>
                       <td>{product.name}</td>
-                      <td>{product.price.toLocaleString()}</td>
+                      <td>{(product?.price || 0).toLocaleString()}</td>
                       <td>{item.quantity}</td>
-                      <td>{(product.price * item.quantity).toLocaleString()}</td>
+                      <td>{(product?.price || 0).toLocaleString()}</td>
                     </tr>
                   );
                 })}

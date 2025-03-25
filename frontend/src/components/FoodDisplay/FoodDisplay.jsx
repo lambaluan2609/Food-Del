@@ -9,7 +9,7 @@ const FoodDisplay = ({ category }) => {
   const [foodList, setFoodList] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const limit = 10; // 🔥 Giới hạn món ăn trên mỗi trang
+  const limit = 12; // 🔥 Giới hạn món ăn trên mỗi trang
 
   const fetchFoodList = async () => {
     try {
@@ -20,7 +20,6 @@ const FoodDisplay = ({ category }) => {
           category: category !== "All" ? category : undefined, // 🔥 Chỉ thêm category nếu khác "All"
         },
       });
-
 
       if (response.data.success) {
         setFoodList(response.data.data);
@@ -55,13 +54,11 @@ const FoodDisplay = ({ category }) => {
               key={item._id}
               id={item._id}
               name={item.name}
-              price={item?.price || 0}
-              description={item.description ?? "No description"} // 🔥 Chặn lỗi undefined/null
+              description={item.description ?? "No description"}
               image={item.image}
             />
           );
         })}
-
       </div>
 
       {/* 🔥 Pagination với CSS cũ */}

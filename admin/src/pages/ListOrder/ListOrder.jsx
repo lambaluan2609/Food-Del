@@ -6,23 +6,24 @@ import "./ListOrder.css";
 import * as XLSX from "xlsx";
 
 const ListOrder = ({ url }) => {
-    const [list, setList] = useState([]);
+    const [allOrders, setAllOrders] = useState([]); // Lưu toàn bộ danh sách từ BE
+    const [displayedOrders, setDisplayedOrders] = useState([]); // Danh sách hiển thị theo phân trang
+    const [filteredOrders, setFilteredOrders] = useState([]); // Danh sách sau khi lọc
     const [totalItems, setTotalItems] = useState(0);
     const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
+    const [searchQuery, setSearchQuery] = useState(""); // State cho ô tìm kiếm
     const [loading, setLoading] = useState(false);
-    const limit = 10;
+    const limit = 10; // Giới hạn số đơn hàng mỗi trang
     const navigate = useNavigate();
 
+    // Lấy toàn bộ danh sách đơn hàng từ BE
     const fetchList = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${url}/api/order/`, {
-                params: { page, limit },
-            });
+            const response = await axios.get(`${url}/api/order/`);
             if (response.data.success) {
-                setList(response.data.data || []);
-                setTotalPages(response.data.totalPages || 1);
+                setAllOrders(response.data.data || []);
+                setFilteredOrders(response.data.data || []); // Ban đầu filteredOrders = allOrders
                 setTotalItems(response.data.totalItems || 0);
             } else {
                 toast.error(response.data.message || "Lỗi khi tải danh sách đơn hàng");
@@ -35,13 +36,40 @@ const ListOrder = ({ url }) => {
         }
     };
 
+    // Hàm lọc đơn hàng theo mã đơn hàng
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+        setPage(1); // Reset về trang 1 khi tìm kiếm
+        if (query.trim() === "") {
+            setFilteredOrders(allOrders); // Nếu không có query, hiển thị toàn bộ danh sách
+        } else {
+            const filtered = allOrders.filter((order) =>
+                order._id.toLowerCase().includes(query.toLowerCase()) ||
+                order.email.toLowerCase().includes(query.toLowerCase())
+            );
+            setFilteredOrders(filtered);
+            setTotalItems(filtered.length); // Cập nhật totalItems dựa trên kết quả lọc
+        }
+    };
+
+    // Hàm phân trang ở FE
+    const updateDisplayedOrders = () => {
+        const startIndex = (page - 1) * limit;
+        const endIndex = startIndex + limit;
+        setDisplayedOrders(filteredOrders.slice(startIndex, endIndex));
+    };
+
+    // Cập nhật trạng thái đơn hàng
     const updateOrderStatus = async (orderId, newStatus) => {
         try {
             const response = await axios.put(`${url}/api/order/${orderId}`, { status: newStatus });
             if (response.data.success) {
                 toast.success(response.data.message);
-                setList((prevList) =>
-                    prevList.map((item) => (item._id === orderId ? { ...item, status: newStatus } : item))
+                setAllOrders((prevOrders) =>
+                    prevOrders.map((item) => (item._id === orderId ? { ...item, status: newStatus } : item))
+                );
+                setFilteredOrders((prevFiltered) =>
+                    prevFiltered.map((item) => (item._id === orderId ? { ...item, status: newStatus } : item))
                 );
             } else {
                 toast.error(response.data.message || "Lỗi khi cập nhật đơn hàng");
@@ -52,12 +80,13 @@ const ListOrder = ({ url }) => {
         }
     };
 
+    // Điều hướng đến trang chi tiết
     const viewOrderDetail = (orderId) => {
         navigate(`/order/${orderId}`);
     };
 
+    // Xuất file Excel
     const exportToExcel = () => {
-        // Dữ liệu tiêu đề
         const headerData = [
             ["Danh sách đơn hàng"],
             [`Ngày xuất: ${new Date().toLocaleDateString("vi-VN", {
@@ -66,12 +95,11 @@ const ListOrder = ({ url }) => {
                 year: "numeric",
             })}`],
             [`Tổng số đơn hàng: ${totalItems}`],
-            [], // Dòng trống
+            [],
         ];
 
-        // Dữ liệu bảng
-        const tableData = list.map((item, index) => ({
-            "STT": (page - 1) * limit + index + 1,
+        const tableData = filteredOrders.map((item, index) => ({
+            "STT": index + 1,
             "Mã đơn hàng": item._id,
             "Họ tên": `${item.firstName} ${item.lastName}`,
             "Email": item.email,
@@ -87,77 +115,63 @@ const ListOrder = ({ url }) => {
                 : "N/A",
         }));
 
-        // Tạo worksheet từ dữ liệu tiêu đề và bảng
         const ws = XLSX.utils.aoa_to_sheet(headerData);
         XLSX.utils.sheet_add_json(ws, tableData, {
-            origin: "A5", // Bắt đầu từ dòng 5 để chừa chỗ cho tiêu đề
+            origin: "A5",
             header: ["STT", "Mã đơn hàng", "Họ tên", "Email", "Số điện thoại", "Tổng tiền", "Trạng thái", "Ngày đặt"],
         });
 
-        // Định dạng cột
+        // Thêm autofilter cho dòng tiêu đề bảng (dòng 5, từ cột A đến H)
+        ws["!autofilter"] = { ref: "A5:H5" };
+
         ws["!cols"] = [
-            { wch: 5 },  // STT
-            { wch: 25 }, // Mã đơn hàng
-            { wch: 20 }, // Họ tên
-            { wch: 25 }, // Email
-            { wch: 15 }, // Số điện thoại
-            { wch: 15 }, // Tổng tiền
-            { wch: 15 }, // Trạng thái
-            { wch: 15 }, // Ngày đặt
+            { wch: 5 },
+            { wch: 25 },
+            { wch: 20 },
+            { wch: 25 },
+            { wch: 15 },
+            { wch: 15 },
+            { wch: 15 },
+            { wch: 15 },
         ];
 
-        // Định dạng tiêu đề bảng
         const range = XLSX.utils.decode_range(ws["!ref"]);
         for (let col = range.s.c; col <= range.e.c; col++) {
-            const cell = ws[XLSX.utils.encode_cell({ r: 4, c: col })]; // Dòng 5 (A5, B5, ...)
+            const cell = ws[XLSX.utils.encode_cell({ r: 4, c: col })];
             if (cell) {
                 cell.s = {
                     font: { bold: true },
-                    fill: { fgColor: { rgb: "D9EAD3" } }, // Màu nền xanh nhạt
+                    fill: { fgColor: { rgb: "D9EAD3" } },
                     alignment: { horizontal: "center" },
-                    border: {
-                        top: { style: "thin" },
-                        bottom: { style: "thin" },
-                        left: { style: "thin" },
-                        right: { style: "thin" },
-                    },
+                    border: { top: { style: "thin" }, bottom: { style: "thin" }, left: { style: "thin" }, right: { style: "thin" } },
                 };
             }
         }
 
-        // Định dạng dữ liệu
         for (let row = 5; row <= range.e.r; row++) {
             for (let col = 0; col <= 7; col++) {
                 const cell = ws[XLSX.utils.encode_cell({ r: row, c: col })];
                 if (cell) {
                     cell.s = {
-                        border: {
-                            top: { style: "thin" },
-                            bottom: { style: "thin" },
-                            left: { style: "thin" },
-                            right: { style: "thin" },
-                        },
-                        alignment: col === 0 || col === 5 || col === 6 ? "center" : "left", // Căn giữa STT, Tổng tiền, Trạng thái
+                        border: { top: { style: "thin" }, bottom: { style: "thin" }, left: { style: "thin" }, right: { style: "thin" } },
+                        alignment: col === 0 || col === 5 || col === 6 ? "center" : "left",
                     };
-                    // Định dạng tiền tệ cho cột "Tổng tiền"
                     if (col === 5) {
-                        cell.z = "#,##0 ₫"; // Định dạng tiền tệ VND
-                        cell.v = Number(cell.v); // Đảm bảo giá trị là số
+                        cell.z = "#,##0 ₫";
+                        cell.v = Number(cell.v);
                     }
                 }
             }
         }
 
-        // Định dạng tiêu đề file
         ws["A1"].s = { font: { sz: 16, bold: true }, alignment: { horizontal: "center" } };
         ws["A2"].s = { font: { sz: 12 }, alignment: { horizontal: "center" } };
         ws["A3"].s = { font: { sz: 12 }, alignment: { horizontal: "center" } };
-        ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 7 } }]; // Gộp ô cho tiêu đề "Danh sách đơn hàng"
+        ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 7 } }];
 
-        // Tạo workbook và xuất file
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Danh sách đơn hàng");
-        XLSX.writeFile(wb, `Danh_sach_don_hang_trang_${page}.xlsx`);
+        XLSX.writeFile(wb, `Danh_sach_don_hang_${new Date().toISOString().slice(0, 10)}.xlsx`);
         toast.success("Đã xuất danh sách đơn hàng thành công!");
     };
 
@@ -191,15 +205,27 @@ const ListOrder = ({ url }) => {
         }
     };
 
+    // Gọi fetchList khi mount và updateDisplayedOrders khi page, filteredOrders thay đổi
     useEffect(() => {
         fetchList();
-    }, [page]);
+    }, []);
+
+    useEffect(() => {
+        updateDisplayedOrders();
+    }, [page, filteredOrders]);
 
     return (
         <div className="list-order">
             <h2 className="list-title">Quản lý đơn hàng</h2>
             <p className="total-items">{`Tổng số đơn hàng: ${totalItems}`}</p>
-            <div className="export-section">
+            <div className="search-export-section">
+                <input
+                    type="text"
+                    placeholder="Tìm theo mã đơn hàng..."
+                    value={searchQuery}
+                    onChange={(e) => handleSearch(e.target.value)}
+                    className="search-input"
+                />
                 <button className="export-btn" onClick={exportToExcel}>
                     Xuất Excel
                 </button>
@@ -224,8 +250,8 @@ const ListOrder = ({ url }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {list.length > 0 ? (
-                                list.map((item, index) => (
+                            {displayedOrders.length > 0 ? (
+                                displayedOrders.map((item, index) => (
                                     <tr key={item._id}>
                                         <td>{(page - 1) * limit + index + 1}</td>
                                         <td>{item._id}</td>
@@ -279,11 +305,11 @@ const ListOrder = ({ url }) => {
                             Trang trước
                         </button>
                         <span className="pagination-info">
-                            Trang {page} / {totalPages}
+                            Trang {page} / {Math.ceil(totalItems / limit)}
                         </span>
                         <button
                             className="pagination-btn"
-                            disabled={page >= totalPages || loading}
+                            disabled={page >= Math.ceil(totalItems / limit) || loading}
                             onClick={() => setPage((prev) => prev + 1)}
                         >
                             Trang sau

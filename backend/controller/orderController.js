@@ -67,31 +67,14 @@ const getDetailOrder = async (req, res) => {
 
 const listOrder = async (req, res) => {
     try {
-        let { page = 1, limit = 10 } = req.query;
-        page = Math.max(parseInt(page), 1);
-        limit = Math.max(parseInt(limit), 1);
-
-        const totalItems = await orderModel.countDocuments();
         const orders = await orderModel
             .find({})
-            .skip((page - 1) * limit)
-            .limit(limit)
             .select("firstName lastName email phone cartTotal status createdAt");
 
-        if (!orders.length && totalItems === 0) {
-            return res.json({
-                success: true,
-                currentPage: page,
-                totalPages: 0,
-                totalItems: 0,
-                data: [],
-            });
-        }
+        const totalItems = orders.length; // Đếm số lượng từ kết quả trả về
 
         res.json({
             success: true,
-            currentPage: page,
-            totalPages: Math.ceil(totalItems / limit),
             totalItems,
             data: orders,
         });

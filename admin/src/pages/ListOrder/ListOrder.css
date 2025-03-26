@@ -128,3 +128,37 @@
     background-color: #218838;
     /* Màu xanh đậm hơn khi hover */
 }
+
+.search-export-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-input {
+    padding: 8px;
+    width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #2196f3;
+    box-shadow: 0 0 5px rgba(33, 150, 243, 0.3);
+}
+
+.export-btn {
+    padding: 8px 16px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.export-btn:hover {
+    background-color: #45a049;
+}

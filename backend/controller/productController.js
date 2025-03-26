@@ -142,10 +142,9 @@ const getProductDetail = async (req, res) => {
 
 // Xóa sản phẩm
 const removeProduct = async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.params; // Lấy ID từ URL parameter
     try {
-        const product = await productModel.findById(req.body.id);
-
+        const product = await productModel.findById(id); // Sửa thành req.params.id
         if (!product) {
             return res.status(404).json({ success: false, message: "Product not found" });
         }
@@ -155,7 +154,7 @@ const removeProduct = async (req, res) => {
         const file = bucket.file(fileName);
 
         await file.delete();
-        await productModel.findByIdAndDelete(req.body.id);
+        await productModel.findByIdAndDelete(id); // Sửa thành req.params.id
 
         res.json({ success: true, message: "Product Removed" });
     } catch (error) {

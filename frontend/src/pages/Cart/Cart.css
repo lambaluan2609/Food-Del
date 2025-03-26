@@ -14,6 +14,31 @@
     margin-bottom: 20px;
 }
 
+.feedback-section {
+    margin-top: 15px;
+    padding: 10px 15px;
+    background-color: #fff3e0; /* Màu nền cam nhạt để nổi bật */
+    border: 1px solid #ff9800; /* Viền cam */
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Hiệu ứng bóng nhẹ */
+  }
+  
+  .feedback-section a {
+    color: #ff5722; /* Màu cam đậm cho số điện thoại */
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .feedback-section a:hover {
+    color: #e64a19; /* Màu cam đậm hơn khi hover */
+    text-decoration: underline;
+  }
+
 .order-check-section h2 {
     font-size: 20px;
     margin-bottom: 15px;

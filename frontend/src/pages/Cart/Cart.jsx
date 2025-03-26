@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import "./Cart.css";
 import { StoreContext } from "../../context/StoreContext";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify"; // Thêm react-toastify
+import { toast } from "react-toastify";
 import logo from "../../assets/logo.png";
 
 const Cart = () => {
@@ -205,6 +205,9 @@ const Cart = () => {
           />
           <button onClick={handleCheckOrder}>Kiểm tra</button>
         </div>
+          <div className="feedback-section">
+          Phản hồi xin liên hệ về Zalo: <a href="https://zalo.me/0868470229" target="_blank" rel="noopener noreferrer">0868470229</a>
+          </div>
         {error && <p className="error-message">{error}</p>}
       </div>
 

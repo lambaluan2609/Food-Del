@@ -134,8 +134,8 @@ const ProductDetail = () => {
                         </div>
 
                         <div className="shipping-info">
-                            <p><strong>Giao hàng:</strong> Miễn phí cho đơn từ 500.000₫</p>
-                            <p><strong>Thời gian giao:</strong> 2-5 ngày làm việc</p>
+                            <p><strong>Giao hàng:</strong> Miễn phí cho đơn từ 200.000₫</p>
+                            <p><strong>Thời gian giao:</strong> 2-7 tiếng sau khi đặt hàng</p>
                         </div>
                     </div>
                 </div>
@@ -176,7 +176,7 @@ const ProductDetail = () => {
                     <h2>Sản phẩm liên quan</h2>
                     <div className="related-products">
                         {/* Thêm logic để render danh sách sản phẩm liên quan */}
-                        <p>Chưa có sản phẩm liên quan (Cần API để hiển thị).</p>
+                        {/* <p>Chưa có sản phẩm liên quan (Cần API để hiển thị).</p> */}
                     </div>
                 </div>
             </div>

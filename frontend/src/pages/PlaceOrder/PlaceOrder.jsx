@@ -28,11 +28,11 @@ const PlaceOrder = () => {
   const placeOrder = async (event) => {
     event.preventDefault();
     let orderItems = [];
-    
+
     // Kiểm tra productList có tồn tại và có dữ liệu
     if (!productList || productList.length === 0) {
-        toast.error("Không thể tải danh sách sản phẩm!");
-        return;
+      toast.error("Không thể tải danh sách sản phẩm!");
+      return;
     }
 
     productList.forEach((item) => {
@@ -123,7 +123,7 @@ const PlaceOrder = () => {
               type="text"
               placeholder=" "
             />
-            <label>Đường/Phố</label>
+            <label>Địa chi</label>
           </div>
           <div className="form-group multi-fields">
             <div className="input-wrapper">
@@ -135,7 +135,7 @@ const PlaceOrder = () => {
                 type="text"
                 placeholder=" "
               />
-              <label>Tỉnh/Thành phố</label>
+              <label>Huyện/ Thành phố</label>
             </div>
             <div className="input-wrapper">
               <input
@@ -146,7 +146,7 @@ const PlaceOrder = () => {
                 type="text"
                 placeholder=" "
               />
-              <label>Quận/Huyện</label>
+              <label>Tỉnh/Thành</label>
             </div>
           </div>
           <div className="input-wrapper">

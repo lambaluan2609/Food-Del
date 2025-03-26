@@ -101,10 +101,10 @@ const StoreContextProvider = (props) => {
         setCartAmount(newCartAmount);
         localStorage.setItem("cartItems", JSON.stringify(cartItems));
 
-        if (newCartAmount > 0 && newCartAmount < 100000) {
-            setDeliveryFee(15000);
-        } else if (newCartAmount >= 100000 && newCartAmount < 500000) {
+        if (newCartAmount > 0 && newCartAmount < 200000) {
             setDeliveryFee(10000);
+        } else if (newCartAmount >= 100000 && newCartAmount < 500000) {
+            setDeliveryFee(0);
         } else {
             setDeliveryFee(0);
         }

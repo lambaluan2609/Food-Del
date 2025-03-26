@@ -205,9 +205,9 @@ const Cart = () => {
           />
           <button onClick={handleCheckOrder}>Kiểm tra</button>
         </div>
-          <div className="feedback-section">
-          Phản hồi xin liên hệ về Zalo: <a href="https://zalo.me/0868470229" target="_blank" rel="noopener noreferrer">0868470229</a>
-          </div>
+        <div className="feedback-section">
+          Phản hồi xin liên hệ về Zalo: <a href="https://zalo.me/0868470229" target="_blank" rel="noopener noreferrer">0868470229</a> / <a href="https://zalo.me/0866942857" target="_blank" rel="noopener noreferrer">0866942857</a>
+        </div>
         {error && <p className="error-message">{error}</p>}
       </div>
 

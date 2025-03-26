@@ -37,9 +37,9 @@ const Footer = () => {
                 <div className="footer-content-right">
                     <h2>LIÊN HỆ</h2>
                     <ul>
-                        <li>+84-868-470-229</li>
-                        <li>lambaluan2609@gmail.com</li>
-                        <li>haidang12112002@gmail.com</li>
+
+                        <li>lambaluan2609@gmail.com </li>
+                        <li>haidang12112002@gmail.com </li>
                     </ul>
                 </div>
             </div>

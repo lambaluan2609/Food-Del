@@ -6,25 +6,28 @@ import "./ListOrder.css";
 import * as XLSX from "xlsx";
 
 const ListOrder = ({ url }) => {
-    const [allOrders, setAllOrders] = useState([]); // Lưu toàn bộ danh sách từ BE
-    const [displayedOrders, setDisplayedOrders] = useState([]); // Danh sách hiển thị theo phân trang
-    const [filteredOrders, setFilteredOrders] = useState([]); // Danh sách sau khi lọc
+    const [allOrders, setAllOrders] = useState([]);
+    const [displayedOrders, setDisplayedOrders] = useState([]);
+    const [filteredOrders, setFilteredOrders] = useState([]);
     const [totalItems, setTotalItems] = useState(0);
     const [page, setPage] = useState(1);
-    const [searchQuery, setSearchQuery] = useState(""); // State cho ô tìm kiếm
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchType, setSearchType] = useState("orderId");
+    const [statusFilter, setStatusFilter] = useState(""); // Thêm state cho filter trạng thái
     const [loading, setLoading] = useState(false);
-    const limit = 10; // Giới hạn số đơn hàng mỗi trang
+    const limit = 10;
     const navigate = useNavigate();
 
-    // Lấy toàn bộ danh sách đơn hàng từ BE
     const fetchList = async () => {
         setLoading(true);
         try {
             const response = await axios.get(`${url}/api/order/`);
             if (response.data.success) {
-                setAllOrders(response.data.data || []);
-                setFilteredOrders(response.data.data || []); // Ban đầu filteredOrders = allOrders
-                setTotalItems(response.data.totalItems || 0);
+                const sortedOrders = (response.data.data || []).sort((a, b) =>
+                    new Date(b.createdAt) - new Date(a.createdAt)
+                );
+                setAllOrders(sortedOrders);
+                applyFilters(sortedOrders, searchQuery, statusFilter); // Áp dụng filter ngay sau khi lấy dữ liệu
             } else {
                 toast.error(response.data.message || "Lỗi khi tải danh sách đơn hàng");
             }
@@ -36,40 +39,65 @@ const ListOrder = ({ url }) => {
         }
     };
 
-    // Hàm lọc đơn hàng theo mã đơn hàng
-    const handleSearch = (query) => {
-        setSearchQuery(query);
-        setPage(1); // Reset về trang 1 khi tìm kiếm
-        if (query.trim() === "") {
-            setFilteredOrders(allOrders); // Nếu không có query, hiển thị toàn bộ danh sách
-        } else {
-            const filtered = allOrders.filter((order) =>
-                order._id.toLowerCase().includes(query.toLowerCase()) ||
-                order.email.toLowerCase().includes(query.toLowerCase())
-            );
-            setFilteredOrders(filtered);
-            setTotalItems(filtered.length); // Cập nhật totalItems dựa trên kết quả lọc
+    // Hàm áp dụng filter cho tìm kiếm và trạng thái
+    const applyFilters = (orders, query, status) => {
+        let filtered = [...orders];
+
+        // Lọc theo tìm kiếm
+        if (query.trim() !== "") {
+            filtered = filtered.filter((order) => {
+                const searchValue = query.toLowerCase();
+                switch (searchType) {
+                    case "orderId":
+                        return order._id.toLowerCase().includes(searchValue);
+                    case "email":
+                        return order.email.toLowerCase().includes(searchValue);
+                    case "phone":
+                        return order.phone.toLowerCase().includes(searchValue);
+                    default:
+                        return false;
+                }
+            });
         }
+
+        // Lọc theo trạng thái
+        if (status !== "") {
+            filtered = filtered.filter((order) => order.status === status);
+        }
+
+        setFilteredOrders(filtered);
+        setTotalItems(filtered.length);
+        setPage(1); // Reset về trang 1 khi filter thay đổi
     };
 
-    // Hàm phân trang ở FE
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+        applyFilters(allOrders, query, statusFilter);
+    };
+
+    const handleStatusFilter = (status) => {
+        setStatusFilter(status);
+        applyFilters(allOrders, searchQuery, status);
+    };
+
     const updateDisplayedOrders = () => {
         const startIndex = (page - 1) * limit;
         const endIndex = startIndex + limit;
         setDisplayedOrders(filteredOrders.slice(startIndex, endIndex));
     };
 
-    // Cập nhật trạng thái đơn hàng
     const updateOrderStatus = async (orderId, newStatus) => {
         try {
             const response = await axios.put(`${url}/api/order/${orderId}`, { status: newStatus });
             if (response.data.success) {
                 toast.success(response.data.message);
                 setAllOrders((prevOrders) =>
-                    prevOrders.map((item) => (item._id === orderId ? { ...item, status: newStatus } : item))
+                    prevOrdersSister.map((item) => (item._id === orderId ? { ...item, status: newStatus } : item))
                 );
-                setFilteredOrders((prevFiltered) =>
-                    prevFiltered.map((item) => (item._id === orderId ? { ...item, status: newStatus } : item))
+                applyFilters(
+                    allOrders.map((item) => (item._id === orderId ? { ...item, status: newStatus } : item)),
+                    searchQuery,
+                    statusFilter
                 );
             } else {
                 toast.error(response.data.message || "Lỗi khi cập nhật đơn hàng");
@@ -80,20 +108,23 @@ const ListOrder = ({ url }) => {
         }
     };
 
-    // Điều hướng đến trang chi tiết
     const viewOrderDetail = (orderId) => {
         navigate(`/order/${orderId}`);
     };
 
-    // Xuất file Excel
     const exportToExcel = () => {
+        // Tính tổng doanh thu chỉ cho trạng thái "DELIVERED"
+        let deliveredOrders = filteredOrders;
+        if (statusFilter === "" || statusFilter === "DELIVERED") {
+            deliveredOrders = filteredOrders.filter((order) => order.status === "DELIVERED");
+        } else {
+            deliveredOrders = []; // Nếu filter không phải "DELIVERED" thì không tính doanh thu
+        }
+        const totalRevenue = deliveredOrders.reduce((sum, order) => sum + order.cartTotal, 0);
+
         const headerData = [
             ["Danh sách đơn hàng"],
-            [`Ngày xuất: ${new Date().toLocaleDateString("vi-VN", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-            })}`],
+            [`Ngày xuất: ${new Date().toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })}`],
             [`Tổng số đơn hàng: ${totalItems}`],
             [],
         ];
@@ -107,11 +138,7 @@ const ListOrder = ({ url }) => {
             "Tổng tiền": item.cartTotal,
             "Trạng thái": getStatusLabel(item.status),
             "Ngày đặt": item.createdAt
-                ? new Date(item.createdAt).toLocaleDateString("vi-VN", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                })
+                ? new Date(item.createdAt).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })
                 : "N/A",
         }));
 
@@ -121,18 +148,14 @@ const ListOrder = ({ url }) => {
             header: ["STT", "Mã đơn hàng", "Họ tên", "Email", "Số điện thoại", "Tổng tiền", "Trạng thái", "Ngày đặt"],
         });
 
-        // Thêm autofilter cho dòng tiêu đề bảng (dòng 5, từ cột A đến H)
-        ws["!autofilter"] = { ref: "A5:H5" };
+        const lastRow = 5 + tableData.length;
+        XLSX.utils.sheet_add_aoa(ws, [[`Tổng doanh thu (Đã nhận): ${totalRevenue.toLocaleString()} ₫`]], {
+            origin: `A${lastRow + 1}`,
+        });
 
+        ws["!autofilter"] = { ref: "A5:H5" };
         ws["!cols"] = [
-            { wch: 5 },
-            { wch: 25 },
-            { wch: 20 },
-            { wch: 25 },
-            { wch: 15 },
-            { wch: 15 },
-            { wch: 15 },
-            { wch: 15 },
+            { wch: 5 }, { wch: 25 }, { wch: 20 }, { wch: 25 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 },
         ];
 
         const range = XLSX.utils.decode_range(ws["!ref"]);
@@ -148,7 +171,7 @@ const ListOrder = ({ url }) => {
             }
         }
 
-        for (let row = 5; row <= range.e.r; row++) {
+        for (let row = 5; row <= lastRow; row++) {
             for (let col = 0; col <= 7; col++) {
                 const cell = ws[XLSX.utils.encode_cell({ r: row, c: col })];
                 if (cell) {
@@ -164,10 +187,21 @@ const ListOrder = ({ url }) => {
             }
         }
 
+        const totalRevenueCell = ws[`A${lastRow + 1}`];
+        if (totalRevenueCell) {
+            totalRevenueCell.s = {
+                font: { bold: true, color: { rgb: "FF0000" } },
+                alignment: { horizontal: "left" },
+            };
+        }
+
         ws["A1"].s = { font: { sz: 16, bold: true }, alignment: { horizontal: "center" } };
         ws["A2"].s = { font: { sz: 12 }, alignment: { horizontal: "center" } };
         ws["A3"].s = { font: { sz: 12 }, alignment: { horizontal: "center" } };
-        ws["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 7 } }];
+        ws["!merges"] = [
+            { s: { r: 0, c: 0 }, e: { r: 0, c: 7 } },
+            { s: { r: lastRow, c: 0 }, e: { r: lastRow, c: 7 } },
+        ];
 
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Danh sách đơn hàng");
@@ -177,35 +211,24 @@ const ListOrder = ({ url }) => {
 
     const getStatusLabel = (status) => {
         switch (status) {
-            case "IN_PROGRESS":
-                return "Đang xử lý";
-            case "SHIPPED":
-                return "Đang giao hàng";
-            case "DELIVERED":
-                return "Đã nhận";
-            case "CANCELLED":
-                return "Đã hủy";
-            default:
-                return status;
+            case "IN_PROGRESS": return "Đang xử lý";
+            case "SHIPPED": return "Đang giao hàng";
+            case "DELIVERED": return "Đã nhận";
+            case "CANCELLED": return "Đã hủy";
+            default: return status;
         }
     };
 
     const getStatusColor = (status) => {
         switch (status) {
-            case "IN_PROGRESS":
-                return "#ff9800";
-            case "SHIPPED":
-                return "#2196f3";
-            case "DELIVERED":
-                return "#4caf50";
-            case "CANCELLED":
-                return "#f44336";
-            default:
-                return "#000000";
+            case "IN_PROGRESS": return "#ff9800";
+            case "SHIPPED": return "#2196f3";
+            case "DELIVERED": return "#4caf50";
+            case "CANCELLED": return "#f44336";
+            default: return "#000000";
         }
     };
 
-    // Gọi fetchList khi mount và updateDisplayedOrders khi page, filteredOrders thay đổi
     useEffect(() => {
         fetchList();
     }, []);
@@ -219,13 +242,33 @@ const ListOrder = ({ url }) => {
             <h2 className="list-title">Quản lý đơn hàng</h2>
             <p className="total-items">{`Tổng số đơn hàng: ${totalItems}`}</p>
             <div className="search-export-section">
+                <select
+                    value={searchType}
+                    onChange={(e) => setSearchType(e.target.value)}
+                    className="search-type-select"
+                >
+                    <option value="orderId">Mã đơn hàng</option>
+                    <option value="email">Email</option>
+                    <option value="phone">Số điện thoại</option>
+                </select>
                 <input
                     type="text"
-                    placeholder="Tìm theo mã đơn hàng..."
+                    placeholder={`Tìm theo ${searchType === "orderId" ? "mã đơn hàng" : searchType === "email" ? "email" : "số điện thoại"}...`}
                     value={searchQuery}
                     onChange={(e) => handleSearch(e.target.value)}
                     className="search-input"
                 />
+                <select
+                    value={statusFilter}
+                    onChange={(e) => handleStatusFilter(e.target.value)}
+                    className="status-filter-select"
+                >
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="IN_PROGRESS">Đang xử lý</option>
+                    <option value="SHIPPED">Đang giao hàng</option>
+                    <option value="DELIVERED">Đã nhận</option>
+                    <option value="CANCELLED">Đã hủy</option>
+                </select>
                 <button className="export-btn" onClick={exportToExcel}>
                     Xuất Excel
                 </button>

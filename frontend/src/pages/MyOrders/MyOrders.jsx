@@ -126,11 +126,7 @@ const MyOrders = () => {
               </div>
               <h1>HÓA ĐƠN MUA HÀNG</h1>
               <p>Cook&Carry - Địa chỉ: Đại học FPT Quy Nhơn - Tp. Quy Nhơn, Bình Định</p>
-              <p>Ngày in: ${new Date().toLocaleDateString("vi-VN", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    })}</p>
+              <p>Ngày in: ${order.createdAt ? new Date(order.createdAt).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }) : "N/A"}</p>
             </div>
             <div class="invoice-details">
               <div class="customer-info">

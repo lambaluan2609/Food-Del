@@ -13,6 +13,8 @@ import RecipeDetails from './pages/RecipeDetails/RecipeDetails.jsx'
 import SearchResults from './pages/SearchResults/SearchResults.jsx'
 import ProductPage from './pages/ProductPage/ProductPage.jsx'
 import ProductDetail from './pages/ProductDetail/ProductDetail.jsx'
+import GeminiChatBox from './components/GeminiChat/GeminiChatBox.jsx';
+
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -44,6 +46,7 @@ const App = () => {
           </Routes>
         </div>
         <Footer />
+        <GeminiChatBox />
       </div>
     </>
 
